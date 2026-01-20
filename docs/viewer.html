@@ -133,7 +133,7 @@
             padding: 20px;
             margin-top: 20px;
             box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-            display: block; /* Show diff by default */
+            display: none; /* Hide diff by default - non-engineers don't need it */
         }
 
         .diff-section h2 {
@@ -500,14 +500,28 @@
 
             let html = '';
             config.changeSummary.forEach((change, index) => {
+                const anchorParam = change.anchor ? `'${change.anchor}'` : 'null';
+
+                // Highlight added/changed text in preview (additions shown in green background)
+                let previewHtml = '';
+                if (change.preview) {
+                    const escapedPreview = escapeHtml(change.preview);
+                    // If this is an addition (deletions = 0), highlight the entire preview
+                    if (change.deletions === 0 && change.additions > 0) {
+                        previewHtml = `<div class="change-item-preview"><span style="background-color: #d4edda; padding: 2px 4px; border-radius: 3px;">${escapedPreview}</span></div>`;
+                    } else {
+                        previewHtml = `<div class="change-item-preview">${escapedPreview}</div>`;
+                    }
+                }
+
                 html += `
-                    <div class="change-item" onclick="scrollToDiffLine(${change.line})">
+                    <div class="change-item" onclick="jumpToChange(${index}, ${anchorParam})">
                         <div class="change-item-header">
                             <span class="change-item-section">${escapeHtml(change.section || '不明なセクション')}</span>
                             <span class="change-item-type">${escapeHtml(change.type)}</span>
                             <span class="change-item-stats">+${change.additions} -${change.deletions}</span>
                         </div>
-                        ${change.preview ? `<div class="change-item-preview">${escapeHtml(change.preview)}</div>` : ''}
+                        ${previewHtml}
                     </div>
                 `;
             });
@@ -515,28 +529,61 @@
             summaryList.innerHTML = html;
         }
 
-        function scrollToDiffLine(lineNumber) {
-            // Scroll to the diff section and highlight the line
-            const diffSection = document.getElementById('diffSection');
-            if (diffSection) {
-                diffSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        function jumpToChange(changeIndex, anchorId) {
+            // Jump to the change location in the NEW (current) version iframe
+            const frameNew = document.getElementById('frameNew');
 
-                // Try to find and highlight the specific line in the diff
-                setTimeout(() => {
-                    const diffContent = document.getElementById('diffContent');
-                    if (diffContent) {
-                        const lines = diffContent.querySelectorAll('div');
-                        lines.forEach(line => {
-                            if (line.textContent.includes(`+${lineNumber},`) || line.textContent.includes(`@@ -`)) {
-                                line.style.background = '#fff3cd';
-                                line.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                                setTimeout(() => {
-                                    line.style.background = '';
-                                }, 3000);
-                            }
-                        });
+            if (!frameNew || !frameNew.contentWindow) {
+                console.error('Could not access iframe');
+                return;
+            }
+
+            try {
+                if (anchorId) {
+                    // If we have an anchor ID, navigate to it in the iframe
+                    const targetUrl = `../snapshots/${config.date}.html#${anchorId}`;
+                    frameNew.contentWindow.location.href = targetUrl;
+
+                    // Scroll the preview panel into view
+                    setTimeout(() => {
+                        const panelNew = document.getElementById('panelNew');
+                        if (panelNew) {
+                            panelNew.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                        }
+
+                        // Flash highlight effect
+                        highlightIframeSection(frameNew, anchorId);
+                    }, 500);
+                } else {
+                    // Fallback: just scroll the iframe panel into view
+                    const panelNew = document.getElementById('panelNew');
+                    if (panelNew) {
+                        panelNew.scrollIntoView({ behavior: 'smooth', block: 'start' });
                     }
-                }, 500);
+                }
+            } catch (e) {
+                console.error('Failed to jump to change:', e);
+            }
+        }
+
+        function highlightIframeSection(iframe, anchorId) {
+            // Add temporary highlight to the section
+            try {
+                const iframeDoc = iframe.contentWindow.document;
+                const targetElement = iframeDoc.getElementById(anchorId);
+
+                if (targetElement) {
+                    // Add highlight class/style
+                    const originalBg = targetElement.style.backgroundColor;
+                    targetElement.style.backgroundColor = '#fff3cd';
+                    targetElement.style.transition = 'background-color 0.3s';
+
+                    setTimeout(() => {
+                        targetElement.style.backgroundColor = originalBg;
+                    }, 2000);
+                }
+            } catch (e) {
+                console.error('Could not highlight section:', e);
             }
         }
 

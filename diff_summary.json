@@ -1,0 +1,23 @@
+{
+  "total_changes": 2,
+  "changes": [
+    {
+      "section": "不明なセクション",
+      "type": "ナビゲーション",
+      "line": 282,
+      "preview": "6. 変更履歴",
+      "additions": 7,
+      "deletions": 0,
+      "anchor": ""
+    },
+    {
+      "section": "1.2 サービスメニュー",
+      "type": "段落",
+      "line": 439,
+      "preview": "※ 2026年1月20日より、リソースプール機能の一部仕様が変更されました。詳細は変更履歴をご確認ください。",
+      "additions": 3,
+      "deletions": 0,
+      "anchor": "12"
+    }
+  ]
+}

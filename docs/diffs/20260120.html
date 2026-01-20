@@ -133,7 +133,7 @@
             padding: 20px;
             margin-top: 20px;
             box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-            display: block; /* Show diff by default */
+            display: none; /* Hide diff by default - non-engineers don't need it */
         }
 
         .diff-section h2 {
@@ -354,7 +354,7 @@
             additions: 10,
             deletions: 0,
             diffContent: "diff --git a/snapshots/20260119.html b/snapshots/20260120.html\nindex 15a9324..1033fb1 100644\n--- a/snapshots/20260119.html\n+++ b/snapshots/20260120.html\n@@ -282,20 +282,27 @@\n             </ul>\n            </nav>\n           </li>\n           <li class=\"md-nav__item\">\n            <a class=\"md-nav__link\" href=\"#5-1\">\n             <span class=\"md-ellipsis\">\n              5. \u4ed8\u9332\uff11. \u7528\u8a9e\u306e\u89e3\u8aac\n             </span>\n            </a>\n           </li>\n+          <li class=\"md-nav__item\">\n+           <a class=\"md-nav__link\" href=\"#6\">\n+            <span class=\"md-ellipsis\">\n+             6. \u5909\u66f4\u5c65\u6b74\n+            </span>\n+           </a>\n+          </li>\n          </ul>\n         </nav>\n        </div>\n       </div>\n      </div>\n      <div class=\"md-content\" data-md-component=\"content\">\n       <article class=\"md-content__inner md-typeset\">\n        <h1>\n         SmartConnect Cloud Platform\uff08Type-V\uff09\uff1c\u30ea\u30bd\u30fc\u30b9\u30d7\u30fc\u30eb\u578b\uff1e\u30b5\u30fc\u30d3\u30b9\u4ed5\u69d8\u66f8\n        </h1>\n@@ -432,20 +439,23 @@\n           <td>\n            SSL\u8a3c\u660e\u66f8\u306e\u53d6\u308a\u6b21\u304e\u8ca9\u58f2\u3001\u30dd\u30fc\u30bf\u30eb\u30b5\u30a4\u30c8\u306e\u30a2\u30ab\u30a6\u30f3\u30c8\u8ffd\u52a0\u7b49\u304c\u53ef\u80fd\u3067\u3059\u3002\n           </td>\n          </tr>\n         </tbody>\n        </table>\n        <div class=\"admonition warning\">\n         <p class=\"admonition-title\">\n          Warning\n         </p>\n+        <p>\n+         \u203b 2026\u5e741\u670820\u65e5\u3088\u308a\u3001\u30ea\u30bd\u30fc\u30b9\u30d7\u30fc\u30eb\u6a5f\u80fd\u306e\u4e00\u90e8\u4ed5\u69d8\u304c\u5909\u66f4\u3055\u308c\u307e\u3057\u305f\u3002\u8a73\u7d30\u306f\u5909\u66f4\u5c65\u6b74\u3092\u3054\u78ba\u8a8d\u304f\u3060\u3055\u3044\u3002\n+        </p>\n         <ul>\n          <li>\n           *1\uff1a\u5fc5\u9808\u5951\u7d04\u306e\u30e1\u30cb\u30e5\u30fc\u3068\u306a\u308a\u307e\u3059\u3002\n          </li>\n         </ul>\n        </div>\n        <p>\n         <br/>\n        </p>\n        <h4 id=\"121\">\n",
-            changeSummary: [{"section": "不明なセクション", "type": "ナビゲーション", "line": 282, "preview": "6. 変更履歴", "additions": 7, "deletions": 0}, {"section": "不明なセクション", "type": "段落", "line": 439, "preview": "※ 2026年1月20日より、リソースプール機能の一部仕様が変更されました。詳細は変更履歴をご確認ください。", "additions": 3, "deletions": 0}]
+            changeSummary: [{"section": "不明なセクション", "type": "ナビゲーション", "line": 282, "preview": "6. 変更履歴", "additions": 7, "deletions": 0, "anchor": ""}, {"section": "1.2 サービスメニュー", "type": "段落", "line": 439, "preview": "※ 2026年1月20日より、リソースプール機能の一部仕様が変更されました。詳細は変更履歴をご確認ください。", "additions": 3, "deletions": 0, "anchor": "12"}]
         };
     
 
@@ -504,14 +504,28 @@
 
             let html = '';
             config.changeSummary.forEach((change, index) => {
+                const anchorParam = change.anchor ? `'${change.anchor}'` : 'null';
+
+                // Highlight added/changed text in preview (additions shown in green background)
+                let previewHtml = '';
+                if (change.preview) {
+                    const escapedPreview = escapeHtml(change.preview);
+                    // If this is an addition (deletions = 0), highlight the entire preview
+                    if (change.deletions === 0 && change.additions > 0) {
+                        previewHtml = `<div class="change-item-preview"><span style="background-color: #d4edda; padding: 2px 4px; border-radius: 3px;">${escapedPreview}</span></div>`;
+                    } else {
+                        previewHtml = `<div class="change-item-preview">${escapedPreview}</div>`;
+                    }
+                }
+
                 html += `
-                    <div class="change-item" onclick="scrollToDiffLine(${change.line})">
+                    <div class="change-item" onclick="jumpToChange(${index}, ${anchorParam})">
                         <div class="change-item-header">
                             <span class="change-item-section">${escapeHtml(change.section || '不明なセクション')}</span>
                             <span class="change-item-type">${escapeHtml(change.type)}</span>
                             <span class="change-item-stats">+${change.additions} -${change.deletions}</span>
                         </div>
-                        ${change.preview ? `<div class="change-item-preview">${escapeHtml(change.preview)}</div>` : ''}
+                        ${previewHtml}
                     </div>
                 `;
             });
@@ -519,28 +533,61 @@
             summaryList.innerHTML = html;
         }
 
-        function scrollToDiffLine(lineNumber) {
-            // Scroll to the diff section and highlight the line
-            const diffSection = document.getElementById('diffSection');
-            if (diffSection) {
-                diffSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        function jumpToChange(changeIndex, anchorId) {
+            // Jump to the change location in the NEW (current) version iframe
+            const frameNew = document.getElementById('frameNew');
 
-                // Try to find and highlight the specific line in the diff
-                setTimeout(() => {
-                    const diffContent = document.getElementById('diffContent');
-                    if (diffContent) {
-                        const lines = diffContent.querySelectorAll('div');
-                        lines.forEach(line => {
-                            if (line.textContent.includes(`+${lineNumber},`) || line.textContent.includes(`@@ -`)) {
-                                line.style.background = '#fff3cd';
-                                line.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                                setTimeout(() => {
-                                    line.style.background = '';
-                                }, 3000);
-                            }
-                        });
+            if (!frameNew || !frameNew.contentWindow) {
+                console.error('Could not access iframe');
+                return;
+            }
+
+            try {
+                if (anchorId) {
+                    // If we have an anchor ID, navigate to it in the iframe
+                    const targetUrl = `../snapshots/${config.date}.html#${anchorId}`;
+                    frameNew.contentWindow.location.href = targetUrl;
+
+                    // Scroll the preview panel into view
+                    setTimeout(() => {
+                        const panelNew = document.getElementById('panelNew');
+                        if (panelNew) {
+                            panelNew.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                        }
+
+                        // Flash highlight effect
+                        highlightIframeSection(frameNew, anchorId);
+                    }, 500);
+                } else {
+                    // Fallback: just scroll the iframe panel into view
+                    const panelNew = document.getElementById('panelNew');
+                    if (panelNew) {
+                        panelNew.scrollIntoView({ behavior: 'smooth', block: 'start' });
                     }
-                }, 500);
+                }
+            } catch (e) {
+                console.error('Failed to jump to change:', e);
+            }
+        }
+
+        function highlightIframeSection(iframe, anchorId) {
+            // Add temporary highlight to the section
+            try {
+                const iframeDoc = iframe.contentWindow.document;
+                const targetElement = iframeDoc.getElementById(anchorId);
+
+                if (targetElement) {
+                    // Add highlight class/style
+                    const originalBg = targetElement.style.backgroundColor;
+                    targetElement.style.backgroundColor = '#fff3cd';
+                    targetElement.style.transition = 'background-color 0.3s';
+
+                    setTimeout(() => {
+                        targetElement.style.backgroundColor = originalBg;
+                    }, 2000);
+                }
+            } catch (e) {
+                console.error('Could not highlight section:', e);
             }
         }
 
