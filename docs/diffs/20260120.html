@@ -616,6 +616,8 @@
         let currentHighlightedElements = [];
 
         function jumpToChange(changeIndex, anchorId) {
+            console.log('jumpToChange called:', changeIndex, anchorId);
+
             const frameOld = document.getElementById('frameOld');
             const frameNew = document.getElementById('frameNew');
 
@@ -625,6 +627,7 @@
             }
 
             const change = config.changeSummary[changeIndex];
+            console.log('Change data:', change);
 
             try {
                 // Clear previous highlights
@@ -640,6 +643,7 @@
 
                 // Determine change type
                 const changeType = determineChangeType(change.type);
+                console.log('Change type determined:', changeType);
 
                 if (anchorId) {
                     // Navigate both iframes to anchor
@@ -696,6 +700,7 @@
 
         function highlightChangedContent(iframe, anchorId, change, highlightType) {
             // Find and highlight the specific changed content
+            console.log('highlightChangedContent called:', iframe.id, anchorId, highlightType);
             try {
                 const iframeDoc = iframe.contentWindow.document;
                 const sectionElement = iframeDoc.getElementById(anchorId);
@@ -704,6 +709,7 @@
                     console.warn('Section element not found:', anchorId);
                     return;
                 }
+                console.log('Section element found:', sectionElement);
 
                 // Find the element containing the changed text
                 let targetElement = null;
