@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NTT Smart Connect Platform Type-V リソースプール仕様</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        header {
+            background: linear-gradient(135deg, #002D62 0%, #0056b3 100%);
+            color: white;
+            padding: 40px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        h1 {
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+        h2 {
+            font-size: 24px;
+            margin: 30px 0 15px 0;
+            color: #002D62;
+            border-bottom: 3px solid #002D62;
+            padding-bottom: 10px;
+        }
+        .content {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        th, td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background: #f8f9fa;
+            font-weight: 600;
+            color: #002D62;
+        }
+        tr:hover {
+            background: #f8f9fa;
+        }
+        .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            background: #e3f2fd;
+            color: #0056b3;
+            border-radius: 4px;
+            font-size: 14px;
+            margin-left: 10px;
+        }
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            padding: 20px;
+            color: #666;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>NTT Smart Connect Platform</h1>
+        <p>Type-V リソースプール仕様書</p>
+    </header>
+
+    <div class="content">
+        <h2>リソースプール仕様</h2>
+
+        <p>本ドキュメントでは、NTT Smart Connect Platform Type-V のリソースプール仕様について説明します。</p>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>リソース種別</th>
+                    <th>最大値</th>
+                    <th>備考</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>vCPU</td>
+                    <td>128コア</td>
+                    <td>仮想プロセッサ</td>
+                </tr>
+                <tr>
+                    <td>メモリ</td>
+                    <td>1TB</td>
+                    <td>RAM容量</td>
+                </tr>
+                <tr>
+                    <td>ストレージ</td>
+                    <td>50TB</td>
+                    <td>HDD/SSD混在</td>
+                </tr>
+                <tr>
+                    <td>ネットワーク帯域</td>
+                    <td>10Gbps</td>
+                    <td>専有帯域</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h2>料金プラン</h2>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>プラン</th>
+                    <th>月額料金</th>
+                    <th>特徴</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>スタンダード</td>
+                    <td>¥100,000</td>
+                    <td>基本プラン</td>
+                </tr>
+                <tr>
+                    <td>プロフェッショナル</td>
+                    <td>¥300,000</td>
+                    <td>高性能プラン</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h2>サポート</h2>
+
+        <p>24時間365日の監視サポートを提供しています。</p>
+        <ul>
+            <li>メールサポート: 受付時間 9:00-18:00</li>
+            <li>電話サポート: 受付時間 9:00-18:00</li>
+        </ul>
+    </div>
+
+    <footer>
+        <p>© 2025 NTT Communications Corporation. All Rights Reserved.</p>
+        <p>最終更新: 20260119</p>
+    </footer>
+</body>
+</html>
