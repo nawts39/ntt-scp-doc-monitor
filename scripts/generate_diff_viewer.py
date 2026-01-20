@@ -138,6 +138,11 @@ def generate_viewer_page(date: str, prev_date: str, stats: Dict):
         end = content.index("};", start) + 2
         updated_content = content[:start] + config_update + content[end:]
 
+        # Fix relative paths for diffs subdirectory
+        # Change href="index.html" to href="../index.html"
+        updated_content = updated_content.replace('href="index.html"', 'href="../index.html"')
+        # Snapshots path is already correct (snapshots/) from viewer.html
+
         with open(output_path, 'w', encoding='utf-8') as f:
             f.write(updated_content)
 
