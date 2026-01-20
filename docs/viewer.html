@@ -822,17 +822,30 @@
                         }
                     }
 
-                    // Search for the text in the section's content (not the heading)
                     const previewText = searchText.substring(0, 50); // First 50 chars
 
-                    // Start search from section's next sibling or children
+                    // IMPORTANT: Search only within the section's content area
+                    // Find the next heading to determine section boundary
                     let searchRoot = sectionElement.parentElement;
+                    let sectionEnd = null;
+
                     if (searchRoot) {
-                        targetElement = findElementWithText(searchRoot, previewText);
+                        // Find the next heading at the same or higher level
+                        let nextHeading = sectionElement.nextElementSibling;
+                        while (nextHeading) {
+                            if (nextHeading.tagName && nextHeading.tagName.match(/^H[1-4]$/)) {
+                                sectionEnd = nextHeading;
+                                break;
+                            }
+                            nextHeading = nextHeading.nextElementSibling;
+                        }
+
+                        // Search within section bounds
+                        targetElement = findElementWithTextInRange(sectionElement, sectionEnd, previewText);
                     }
 
                     if (!targetElement) {
-                        // Try searching within the section itself
+                        // Fallback: search from section element
                         targetElement = findElementWithText(sectionElement, previewText);
                     }
                 }
@@ -891,6 +904,26 @@
             } catch (e) {
                 console.error('Could not highlight content:', e);
             }
+        }
+
+        function findElementWithTextInRange(startElement, endElement, searchText) {
+            // Search for text only within the range from startElement to endElement
+            const normalizedSearch = searchText.toLowerCase().replace(/\s+/g, ' ').trim();
+            let currentElement = startElement.nextElementSibling;
+
+            while (currentElement && currentElement !== endElement) {
+                const elementText = currentElement.textContent.toLowerCase().replace(/\s+/g, ' ').trim();
+
+                if (elementText.includes(normalizedSearch)) {
+                    // Search within this element
+                    const found = findElementWithText(currentElement, searchText);
+                    if (found) return found;
+                }
+
+                currentElement = currentElement.nextElementSibling;
+            }
+
+            return null;
         }
 
         function findElementWithText(rootElement, searchText) {
