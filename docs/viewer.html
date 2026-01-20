@@ -183,6 +183,69 @@
             font-weight: bold;
         }
 
+        .change-summary-section {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .change-summary-section h2 {
+            font-size: 18px;
+            margin-bottom: 15px;
+            color: #333;
+        }
+
+        .change-item {
+            background: #f8f9fa;
+            border-left: 4px solid #667eea;
+            padding: 12px 16px;
+            margin-bottom: 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .change-item:hover {
+            background: #e3f2fd;
+            border-left-color: #2196f3;
+            transform: translateX(4px);
+        }
+
+        .change-item-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 6px;
+        }
+
+        .change-item-section {
+            font-weight: 600;
+            color: #333;
+            font-size: 15px;
+        }
+
+        .change-item-type {
+            background: #667eea;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 3px;
+            font-size: 12px;
+        }
+
+        .change-item-stats {
+            font-size: 12px;
+            color: #666;
+        }
+
+        .change-item-preview {
+            color: #555;
+            font-size: 13px;
+            margin-top: 4px;
+            line-height: 1.5;
+        }
+
         .summary-stats {
             display: flex;
             gap: 20px;
@@ -251,6 +314,12 @@
 
     <div class="container" id="viewContainer">
         <div class="summary-stats" id="summaryStats"></div>
+
+        <!-- Change Summary Section -->
+        <div class="change-summary-section" id="changeSummarySection">
+            <h2>📋 変更箇所サマリー</h2>
+            <div id="changeSummaryList"></div>
+        </div>
 
         <div class="preview-container">
             <div class="preview-panel" id="panelOld">
@@ -418,6 +487,59 @@
             return div.innerHTML;
         }
 
+        function loadChangeSummary() {
+            const summaryList = document.getElementById('changeSummaryList');
+            const summarySection = document.getElementById('changeSummarySection');
+
+            if (!config.changeSummary || config.changeSummary.length === 0) {
+                summarySection.style.display = 'none';
+                return;
+            }
+
+            summarySection.style.display = 'block';
+
+            let html = '';
+            config.changeSummary.forEach((change, index) => {
+                html += `
+                    <div class="change-item" onclick="scrollToDiffLine(${change.line})">
+                        <div class="change-item-header">
+                            <span class="change-item-section">${escapeHtml(change.section || '不明なセクション')}</span>
+                            <span class="change-item-type">${escapeHtml(change.type)}</span>
+                            <span class="change-item-stats">+${change.additions} -${change.deletions}</span>
+                        </div>
+                        ${change.preview ? `<div class="change-item-preview">${escapeHtml(change.preview)}</div>` : ''}
+                    </div>
+                `;
+            });
+
+            summaryList.innerHTML = html;
+        }
+
+        function scrollToDiffLine(lineNumber) {
+            // Scroll to the diff section and highlight the line
+            const diffSection = document.getElementById('diffSection');
+            if (diffSection) {
+                diffSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+                // Try to find and highlight the specific line in the diff
+                setTimeout(() => {
+                    const diffContent = document.getElementById('diffContent');
+                    if (diffContent) {
+                        const lines = diffContent.querySelectorAll('div');
+                        lines.forEach(line => {
+                            if (line.textContent.includes(`+${lineNumber},`) || line.textContent.includes(`@@ -`)) {
+                                line.style.background = '#fff3cd';
+                                line.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                                setTimeout(() => {
+                                    line.style.background = '';
+                                }, 3000);
+                            }
+                        });
+                    }
+                }, 500);
+            }
+        }
+
         function loadMetaInfo() {
             const metaInfo = document.getElementById('metaInfo');
             metaInfo.textContent = `Date: ${config.date} | Previous: ${config.prevDate}`;
@@ -444,6 +566,7 @@
             loadMetaInfo();
             loadPreviews();
             loadDiff();
+            loadChangeSummary();
         });
     </script>
 </body>

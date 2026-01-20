@@ -117,8 +117,17 @@ def generate_viewer_page(date: str, prev_date: str, stats: Dict):
         with open(diff_path, 'r', encoding='utf-8') as f:
             diff_details = f.read()
 
+    # Read diff summary (if available)
+    diff_summary = []
+    summary_path = Path("diff_summary.json")
+    if summary_path.exists():
+        with open(summary_path, 'r', encoding='utf-8') as f:
+            summary_data = json.load(f)
+            diff_summary = summary_data.get('changes', [])
+
     # Escape for JavaScript string
     diff_details_escaped = json.dumps(diff_details)
+    diff_summary_escaped = json.dumps(diff_summary, ensure_ascii=False)
 
     # Update configuration in the viewer
     config_update = f"""
@@ -127,7 +136,8 @@ def generate_viewer_page(date: str, prev_date: str, stats: Dict):
             prevDate: '{prev_date}',
             additions: {stats['additions']},
             deletions: {stats['deletions']},
-            diffContent: {diff_details_escaped}
+            diffContent: {diff_details_escaped},
+            changeSummary: {diff_summary_escaped}
         }};
     """
 
