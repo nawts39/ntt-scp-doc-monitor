@@ -53,10 +53,12 @@ jobs:
           DATE=$(date +%Y%m%d)
           echo "date=${DATE}" >> $GITHUB_OUTPUT
 
-      - name: Create test diff
+      - name: Create test snapshots and diff
         if: ${{ inputs.test_mode }}
         run: |
-          echo "🧪 Test mode: Creating dummy diff files"
+          echo "🧪 Test mode: Creating test snapshots with visual differences"
+          python scripts/create_test_snapshots.py
+          python scripts/check_diff.py
           python scripts/create_test_diff.py
 
       - name: Check for changes
