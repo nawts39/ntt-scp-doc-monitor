@@ -142,7 +142,6 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add snapshots/
           git add docs/
-          git add diff_summary.txt diff_details.txt || true
 
           COMMIT_MSG="📸 Add snapshot and visual diff viewer ${{ steps.fetch.outputs.date || steps.test_date.outputs.date }}"
           if [ "${{ inputs.test_mode }}" = "true" ]; then

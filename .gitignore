@@ -7,9 +7,9 @@ __pycache__/
 venv/
 env/
 
-# Diff files (committed selectively)
-# diff_summary.txt
-# diff_details.txt
+# Diff files (temporary, not committed)
+diff_summary.txt
+diff_details.txt
 
 # IDE
 .vscode/
