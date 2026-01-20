@@ -499,10 +499,106 @@
                         baseElement.href = window.location.origin + window.location.pathname.replace(/diffs\/[^/]+$/, 'snapshots/');
                         iframeDoc.head.insertBefore(baseElement, iframeDoc.head.firstChild);
                     }
+
+                    // Inject CSS for highlighting into iframe
+                    injectHighlightCSS(iframeDoc);
                 }
             } catch (e) {
                 console.warn('Could not fix iframe base path:', e);
             }
+        }
+
+        function injectHighlightCSS(iframeDoc) {
+            // Inject CSS styles for highlighting directly into iframe
+            const styleId = 'highlight-styles';
+
+            // Check if already injected
+            if (iframeDoc.getElementById(styleId)) {
+                return;
+            }
+
+            const styleElement = iframeDoc.createElement('style');
+            styleElement.id = styleId;
+            styleElement.textContent = `
+                /* Highlight styles injected for change detection */
+                .change-highlight-added,
+                .change-highlight-added * {
+                    background-color: #d4edda !important;
+                }
+
+                .change-highlight-added {
+                    border: 3px solid #28a745 !important;
+                    border-radius: 6px !important;
+                    padding: 8px !important;
+                    margin: 4px 0 !important;
+                    box-shadow: 0 0 15px rgba(40, 167, 69, 0.8) !important;
+                    transition: all 0.3s ease !important;
+                    outline: 2px solid #28a745 !important;
+                    outline-offset: 2px !important;
+                }
+
+                .change-highlight-deleted,
+                .change-highlight-deleted * {
+                    background-color: #f8d7da !important;
+                }
+
+                .change-highlight-deleted {
+                    border: 3px solid #dc3545 !important;
+                    border-radius: 6px !important;
+                    padding: 8px !important;
+                    margin: 4px 0 !important;
+                    box-shadow: 0 0 15px rgba(220, 53, 69, 0.8) !important;
+                    transition: all 0.3s ease !important;
+                    outline: 2px solid #dc3545 !important;
+                    outline-offset: 2px !important;
+                }
+
+                .change-highlight-modified,
+                .change-highlight-modified * {
+                    background-color: #fff3cd !important;
+                }
+
+                .change-highlight-modified {
+                    border: 3px solid #ffc107 !important;
+                    border-radius: 6px !important;
+                    padding: 8px !important;
+                    margin: 4px 0 !important;
+                    box-shadow: 0 0 15px rgba(255, 193, 7, 0.8) !important;
+                    transition: all 0.3s ease !important;
+                    outline: 2px solid #ffc107 !important;
+                    outline-offset: 2px !important;
+                }
+
+                .change-highlight-flash-added {
+                    animation: flashHighlightAdded 0.5s ease;
+                }
+
+                .change-highlight-flash-deleted {
+                    animation: flashHighlightDeleted 0.5s ease;
+                }
+
+                .change-highlight-flash-modified {
+                    animation: flashHighlightModified 0.5s ease;
+                }
+
+                @keyframes flashHighlightAdded {
+                    0%, 100% { background-color: #d4edda; }
+                    50% { background-color: #a3d9a5; }
+                }
+
+                @keyframes flashHighlightDeleted {
+                    0%, 100% { background-color: #f8d7da; }
+                    50% { background-color: #f5b7b1; }
+                }
+
+                @keyframes flashHighlightModified {
+                    0%, 100% { background-color: #fff3cd; }
+                    50% { background-color: #ffe082; }
+                }
+            `;
+
+            iframeDoc.head.appendChild(styleElement);
+            console.log('Injected highlight CSS into iframe');
         }
 
         function setupScrollSync(sourceFrame, targetFrame) {
