@@ -279,7 +279,8 @@
             date: '20260120',
             prevDate: '20260119',
             additions: 14,
-            deletions: 6
+            deletions: 6,
+            diffContent: "--- snapshots/20260119.html\n+++ snapshots/20260120.html\n@@ -95,20 +95,29 @@\n       </head>\n       <body>\n         <div class=\"container\">\n           <header>\n             <h1>NTT Smart Connect Platform</h1>\n             <nav>\n               <ul>\n                 <li><a href=\"#spec\">\u4ed5\u69d8</a></li>\n                 <li><a href=\"#pricing\">\u6599\u91d1</a></li>\n               </ul>\n             </nav>\n           </header>\n           <main>\n             <section id=\"spec\" class=\"content\">\n-              <h2>\u30ea\u30bd\u30fc\u30b9\u30d7\u30fc\u30eb\u4ed5\u69d8</h2>\n+              <h2>\u30ea\u30bd\u30fc\u30b9\u30d7\u30fc\u30eb\u4ed5\u69d8\uff08\u66f4\u65b0\u7248\uff09</h2>\n+              <p class=\"update-notice\">\n+                <span class=\"badge\">NEW</span>\n+                \u6700\u7d42\u66f4\u65b0: 2026\u5e741\u670820\u65e5\n+              </p>\n               <table class=\"spec-table\">\n                 <thead>\n                   <tr>\n                     <th>\u9805\u76ee</th>\n                     <th>\u4ed5\u69d8</th>\n                   </tr>\n                 </thead>\n                 <tbody>\n                   <tr>\n-                    <td>vCPU</td>\n-                    <td>\u6700\u5927 128\u30b3\u30a2</td>\n+                    <td>vCPU\uff08\u4eee\u60f3CPU\uff09</td>\n+                    <td>\u6700\u5927 256\u30b3\u30a2\uff08\u5f93\u6765\u6bd42\u500d\uff09</td>\n                   </tr>\n                   <tr>\n-                    <td>\u30e1\u30e2\u30ea</td>\n-                    <td>\u6700\u5927 1TB</td>\n+                    <td>\u30e1\u30e2\u30ea\uff08RAM\uff09</td>\n+                    <td>\u6700\u5927 2TB\uff08\u5f93\u6765\u6bd42\u500d\uff09</td>\n+                  </tr>\n+                  <tr>\n+                    <td>\u30b9\u30c8\u30ec\u30fc\u30b8</td>\n+                    <td>\u6700\u5927 100TB\uff08SSD\u5bfe\u5fdc\uff09</td>\n                   </tr>\n                 </tbody>\n               </table>\n             </section>\n           </main>\n         </div>\n       </body>\n     </html>\n"
         };
     
 
@@ -318,14 +319,25 @@
             const frameNew = document.getElementById('frameNew');
 
             // Load snapshots into iframes
-            frameOld.src = `../snapshots/${config.prevDate}.html`;
-            frameNew.src = `../snapshots/${config.date}.html`;
+            frameOld.src = `snapshots/${config.prevDate}.html`;
+            frameNew.src = `snapshots/${config.date}.html`;
         }
 
         function loadDiff() {
-            // This would be populated from the diff data file
             const diffContent = document.getElementById('diffContent');
-            diffContent.textContent = 'Diff data will be loaded here...';
+
+            if (config.diffContent) {
+                // Format diff content with syntax highlighting
+                diffContent.innerHTML = `<pre><code>${escapeHtml(config.diffContent)}</code></pre>`;
+            } else {
+                diffContent.innerHTML = '<p style="color: #999; text-align: center; padding: 20px;">Diff data not available for this view mode. Please use the generated diff viewer page.</p>';
+            }
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
         }
 
         function loadMetaInfo() {
