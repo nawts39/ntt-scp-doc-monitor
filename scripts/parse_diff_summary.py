@@ -116,6 +116,13 @@ class SemanticChangeDetector:
         if not self.snapshot_lines:
             return ("不明なセクション", "")
 
+        # Check if this is a navigation element (before any heading)
+        # Look for navigation-related patterns in nearby lines
+        for i in range(max(0, line_number - 10), min(line_number + 10, len(self.snapshot_lines))):
+            line = self.snapshot_lines[i]
+            if any(pattern in line for pattern in ['class="md-nav', '<nav', 'md-sidebar', 'md-header']):
+                return ("目次/ナビゲーション", "")
+
         # Look backwards for nearest heading
         for i in range(min(line_number - 1, len(self.snapshot_lines) - 1),
                       max(0, line_number - 500), -1):
