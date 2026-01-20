@@ -110,13 +110,24 @@ def generate_viewer_page(date: str, prev_date: str, stats: Dict):
     with open(viewer_template, 'r', encoding='utf-8') as f:
         content = f.read()
 
+    # Read diff details
+    diff_details = ""
+    diff_path = Path("diff_details.txt")
+    if diff_path.exists():
+        with open(diff_path, 'r', encoding='utf-8') as f:
+            diff_details = f.read()
+
+    # Escape for JavaScript string
+    diff_details_escaped = json.dumps(diff_details)
+
     # Update configuration in the viewer
     config_update = f"""
         const config = {{
             date: '{date}',
             prevDate: '{prev_date}',
             additions: {stats['additions']},
-            deletions: {stats['deletions']}
+            deletions: {stats['deletions']},
+            diffContent: {diff_details_escaped}
         }};
     """
 

@@ -321,9 +321,20 @@
         }
 
         function loadDiff() {
-            // This would be populated from the diff data file
             const diffContent = document.getElementById('diffContent');
-            diffContent.textContent = 'Diff data will be loaded here...';
+
+            if (config.diffContent) {
+                // Format diff content with syntax highlighting
+                diffContent.innerHTML = `<pre><code>${escapeHtml(config.diffContent)}</code></pre>`;
+            } else {
+                diffContent.innerHTML = '<p style="color: #999; text-align: center; padding: 20px;">Diff data not available for this view mode. Please use the generated diff viewer page.</p>';
+            }
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
         }
 
         function loadMetaInfo() {
