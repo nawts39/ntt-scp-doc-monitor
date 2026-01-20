@@ -133,6 +133,7 @@
             padding: 20px;
             margin-top: 20px;
             box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            display: block; /* Show diff by default */
         }
 
         .diff-section h2 {
@@ -374,8 +375,38 @@
             const diffContent = document.getElementById('diffContent');
 
             if (config.diffContent) {
-                // Format diff content with syntax highlighting
-                diffContent.innerHTML = `<pre><code>${escapeHtml(config.diffContent)}</code></pre>`;
+                // Parse and format diff with color highlighting
+                const lines = config.diffContent.split('\n');
+                let formattedHtml = '<div style="font-family: monospace; font-size: 13px; line-height: 1.6;">';
+
+                lines.forEach(line => {
+                    let color = '';
+                    let backgroundColor = '';
+                    let fontWeight = 'normal';
+
+                    if (line.startsWith('+++') || line.startsWith('---')) {
+                        color = '#666';
+                        fontWeight = 'bold';
+                    } else if (line.startsWith('+')) {
+                        color = '#22863a';
+                        backgroundColor = '#f0fff4';
+                        fontWeight = '600';
+                    } else if (line.startsWith('-')) {
+                        color = '#d73a49';
+                        backgroundColor = '#ffeef0';
+                        fontWeight = '600';
+                    } else if (line.startsWith('@@')) {
+                        color = '#0366d6';
+                        backgroundColor = '#e3f2fd';
+                        fontWeight = 'bold';
+                    }
+
+                    const escapedLine = escapeHtml(line || ' ');
+                    formattedHtml += `<div style="color: ${color}; background: ${backgroundColor}; padding: 2px 8px; font-weight: ${fontWeight};">${escapedLine}</div>`;
+                });
+
+                formattedHtml += '</div>';
+                diffContent.innerHTML = formattedHtml;
             } else {
                 diffContent.innerHTML = '<p style="color: #999; text-align: center; padding: 20px;">Diff data not available for this view mode. Please use the generated diff viewer page.</p>';
             }
