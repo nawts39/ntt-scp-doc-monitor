@@ -516,21 +516,14 @@
             const styleElement = iframeDoc.createElement('style');
             styleElement.id = styleId;
             styleElement.textContent = `
-                /* Highlight styles injected for change detection */
+                /* Highlight styles injected for change detection - background only */
                 .change-highlight-added,
                 .change-highlight-added * {
                     background-color: #d4edda !important;
                 }
 
                 .change-highlight-added {
-                    border: 3px solid #28a745 !important;
-                    border-radius: 6px !important;
-                    padding: 8px !important;
-                    margin: 4px 0 !important;
-                    box-shadow: 0 0 15px rgba(40, 167, 69, 0.8) !important;
-                    transition: all 0.3s ease !important;
-                    outline: 2px solid #28a745 !important;
-                    outline-offset: 2px !important;
+                    transition: background-color 0.3s ease !important;
                 }
 
                 .change-highlight-deleted,
@@ -539,14 +532,7 @@
                 }
 
                 .change-highlight-deleted {
-                    border: 3px solid #dc3545 !important;
-                    border-radius: 6px !important;
-                    padding: 8px !important;
-                    margin: 4px 0 !important;
-                    box-shadow: 0 0 15px rgba(220, 53, 69, 0.8) !important;
-                    transition: all 0.3s ease !important;
-                    outline: 2px solid #dc3545 !important;
-                    outline-offset: 2px !important;
+                    transition: background-color 0.3s ease !important;
                 }
 
                 .change-highlight-modified,
@@ -555,14 +541,7 @@
                 }
 
                 .change-highlight-modified {
-                    border: 3px solid #ffc107 !important;
-                    border-radius: 6px !important;
-                    padding: 8px !important;
-                    margin: 4px 0 !important;
-                    box-shadow: 0 0 15px rgba(255, 193, 7, 0.8) !important;
-                    transition: all 0.3s ease !important;
-                    outline: 2px solid #ffc107 !important;
-                    outline-offset: 2px !important;
+                    transition: background-color 0.3s ease !important;
                 }
 
                 .change-highlight-flash-added {
@@ -859,20 +838,38 @@
                 }
 
                 if (!targetElement || targetElement.tagName.match(/^H[1-6]$/)) {
-                    // If not found or if it's a heading, look for next meaningful content
-                    // Find the next paragraph, div, table, or list after the section
-                    let nextElement = sectionElement.nextElementSibling;
-                    while (nextElement) {
-                        if (nextElement.tagName.match(/^(P|DIV|TABLE|UL|OL|DL)$/)) {
-                            targetElement = nextElement;
-                            break;
+                    // For heading changes, find the actual H tag that changed
+                    if (change.html_element === 'content' && change.preview && change.preview.includes('1.1')) {
+                        // This is likely a heading change - look for h3 or h4 with the text
+                        const headings = sectionElement.parentElement.querySelectorAll('h3, h4');
+                        for (let heading of headings) {
+                            if (heading.textContent.includes('サービス')) {
+                                targetElement = heading;
+                                break;
+                            }
                         }
-                        nextElement = nextElement.nextElementSibling;
                     }
 
-                    // If still nothing, highlight a larger container
-                    if (!targetElement) {
-                        targetElement = sectionElement.parentElement || sectionElement;
+                    // If still a heading or not found, look for next meaningful content
+                    if (!targetElement || targetElement.tagName.match(/^H[1-6]$/)) {
+                        let nextElement = sectionElement.nextElementSibling;
+                        while (nextElement) {
+                            if (nextElement.tagName.match(/^(P|DIV|TABLE|UL|OL|DL)$/)) {
+                                targetElement = nextElement;
+                                break;
+                            }
+                            nextElement = nextElement.nextElementSibling;
+                        }
+
+                        // For heading-only changes, highlight the heading itself
+                        if (!targetElement && change.preview && (change.preview.includes('[旧]') || change.preview.includes('サービス概要') || change.preview.includes('サービスの特徴'))) {
+                            targetElement = sectionElement;
+                        }
+
+                        // If still nothing, highlight a larger container
+                        if (!targetElement) {
+                            targetElement = sectionElement.parentElement || sectionElement;
+                        }
                     }
                 }
 
