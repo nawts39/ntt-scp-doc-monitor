@@ -64,17 +64,27 @@ def send_discord_notification(webhook_url: str, date: str, repo_url: str) -> Non
                 "inline": False
             })
 
+    # Extract username from repo_url
+    username = repo_url.split('/')[-2] if '/' in repo_url else 'unknown'
+    repo_name = repo_url.split('/')[-1] if '/' in repo_url else 'unknown'
+    viewer_url = f"https://{username}.github.io/{repo_name}/diffs/{date}.html"
+
     # Add links
     embed["fields"].extend([
         {
-            "name": "📄 完全な差分",
-            "value": f"[GitHub で確認]({repo_url}/blob/main/snapshots/{date}.html)",
+            "name": "👁️ ビジュアル差分ビューア",
+            "value": f"[Side-by-Side表示で確認]({viewer_url})",
             "inline": False
+        },
+        {
+            "name": "📄 スナップショット",
+            "value": f"[GitHubで確認]({repo_url}/blob/main/snapshots/{date}.html)",
+            "inline": True
         },
         {
             "name": "📊 Issues",
             "value": f"[詳細を確認]({repo_url}/issues)",
-            "inline": False
+            "inline": True
         }
     ])
 

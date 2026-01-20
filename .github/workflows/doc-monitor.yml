@@ -90,6 +90,11 @@ jobs:
               labels: ['documentation', 'auto-detected']
             });
 
+      - name: Generate visual diff viewer
+        if: steps.diff.outputs.changed == 'true' || inputs.test_mode
+        run: |
+          python scripts/generate_diff_viewer.py
+
       - name: Send Discord notification
         if: steps.diff.outputs.changed == 'true' || inputs.test_mode
         env:
@@ -99,6 +104,11 @@ jobs:
             echo "⚠️  Discord webhook URL not set. Skipping Discord notification."
             exit 0
           fi
+
+          # Add visual diff viewer link to notification
+          VIEWER_URL="https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/diffs/${{ steps.fetch.outputs.date || steps.test_date.outputs.date }}.html"
+          echo "🔗 Visual Diff Viewer: $VIEWER_URL"
+
           python scripts/notify_discord.py \
             "${{ secrets.DISCORD_WEBHOOK_URL }}" \
             "${{ steps.fetch.outputs.date || steps.test_date.outputs.date }}" \
@@ -110,8 +120,9 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add snapshots/
+          git add docs/
           git add diff_summary.txt diff_details.txt
-          git commit -m "📸 Add snapshot ${{ steps.fetch.outputs.date }}"
+          git commit -m "📸 Add snapshot and visual diff viewer ${{ steps.fetch.outputs.date }}"
           git push
 
       - name: No changes detected
