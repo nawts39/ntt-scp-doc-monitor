@@ -240,6 +240,9 @@
         <button onclick="toggleDiffSection()">
             💾 Show/Hide Raw Diff
         </button>
+        <button id="scrollSyncBtn" onclick="toggleScrollSync()" style="background: #28a745; color: white;">
+            🔗 Scroll Sync: ON
+        </button>
         <a href="index.html" style="margin-left: auto; text-decoration: none;">
             <button>← Back to List</button>
         </a>
@@ -311,6 +314,9 @@
             section.style.display = section.style.display === 'none' ? 'block' : 'none';
         }
 
+        let syncScrollEnabled = true;
+        let isScrolling = false;
+
         function loadPreviews() {
             const frameOld = document.getElementById('frameOld');
             const frameNew = document.getElementById('frameNew');
@@ -318,6 +324,50 @@
             // Load snapshots into iframes
             frameOld.src = `snapshots/${config.prevDate}.html`;
             frameNew.src = `snapshots/${config.date}.html`;
+
+            // Setup scroll sync after iframes load
+            frameOld.addEventListener('load', () => setupScrollSync(frameOld, frameNew));
+            frameNew.addEventListener('load', () => setupScrollSync(frameNew, frameOld));
+        }
+
+        function setupScrollSync(sourceFrame, targetFrame) {
+            try {
+                const sourceDoc = sourceFrame.contentWindow;
+                sourceDoc.addEventListener('scroll', () => {
+                    if (!syncScrollEnabled || isScrolling) return;
+                    isScrolling = true;
+
+                    try {
+                        const sourceScrollTop = sourceDoc.scrollY || sourceDoc.document.documentElement.scrollTop;
+                        const sourceScrollHeight = sourceDoc.document.documentElement.scrollHeight - sourceDoc.innerHeight;
+                        const scrollPercentage = sourceScrollHeight > 0 ? sourceScrollTop / sourceScrollHeight : 0;
+
+                        const targetDoc = targetFrame.contentWindow;
+                        const targetScrollHeight = targetDoc.document.documentElement.scrollHeight - targetDoc.innerHeight;
+                        const targetScrollTop = scrollPercentage * targetScrollHeight;
+
+                        targetDoc.scrollTo({
+                            top: targetScrollTop,
+                            behavior: 'auto'
+                        });
+                    } catch (e) {
+                        console.error('Scroll sync error:', e);
+                    }
+
+                    setTimeout(() => { isScrolling = false; }, 50);
+                });
+            } catch (e) {
+                console.error('Failed to setup scroll sync:', e);
+            }
+        }
+
+        function toggleScrollSync() {
+            syncScrollEnabled = !syncScrollEnabled;
+            const btn = document.getElementById('scrollSyncBtn');
+            if (btn) {
+                btn.textContent = syncScrollEnabled ? '🔗 Scroll Sync: ON' : '🔓 Scroll Sync: OFF';
+                btn.style.background = syncScrollEnabled ? '#28a745' : '#6c757d';
+            }
         }
 
         function loadDiff() {

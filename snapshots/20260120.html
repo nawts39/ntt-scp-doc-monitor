@@ -1,193 +1,4942 @@
 <!DOCTYPE html>
-<html lang="ja">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NTT Smart Connect Platform Type-V リソースプール仕様</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            line-height: 1.6;
-            color: #333;
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
-            background: #f5f5f5;
-        }
-        header {
-            background: linear-gradient(135deg, #002D62 0%, #0056b3 100%);
-            color: white;
-            padding: 40px;
-            border-radius: 8px;
-            margin-bottom: 30px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        }
-        h1 {
-            font-size: 32px;
-            margin-bottom: 10px;
-        }
-        h2 {
-            font-size: 24px;
-            margin: 30px 0 15px 0;
-            color: #002D62;
-            border-bottom: 3px solid #002D62;
-            padding-bottom: 10px;
-        }
-        .content {
-            background: white;
-            padding: 30px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-        .update-notice {
-            background: #fff3cd;
-            border-left: 4px solid #ffc107;
-            padding: 15px;
-            margin: 20px 0;
-            border-radius: 4px;
-        }
-        .badge {
-            display: inline-block;
-            padding: 4px 12px;
-            background: #28a745;
-            color: white;
-            border-radius: 4px;
-            font-size: 12px;
-            font-weight: bold;
-            margin-left: 10px;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 20px 0;
-        }
-        th, td {
-            padding: 15px;
-            text-align: left;
-            border-bottom: 1px solid #ddd;
-        }
-        th {
-            background: #f8f9fa;
-            font-weight: 600;
-            color: #002D62;
-        }
-        tr:hover {
-            background: #f8f9fa;
-        }
-        .highlight {
-            background: #fffacd;
-            font-weight: 600;
-        }
-        footer {
-            text-align: center;
-            margin-top: 40px;
-            padding: 20px;
-            color: #666;
-            font-size: 14px;
-        }
-    </style>
-</head>
-<body>
-    <header>
-        <h1>NTT Smart Connect Platform</h1>
-        <p>Type-V リソースプール仕様書 <span class="badge">UPDATED</span></p>
-    </header>
-
-    <div class="content">
-        <div class="update-notice">
-            <strong>📢 重要なお知らせ</strong><br>
-            2026年1月20日より、リソースプール仕様が大幅に強化されました。
-        </div>
-
-        <h2>リソースプール仕様（2026年版）</h2>
-
-        <p>本ドキュメントでは、NTT Smart Connect Platform Type-V のリソースプール仕様について説明します。</p>
-
-        <table>
-            <thead>
-                <tr>
-                    <th>リソース種別</th>
-                    <th>最大値</th>
-                    <th>備考</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>vCPU（仮想CPU）</td>
-                    <td class="highlight">256コア（従来比2倍）</td>
-                    <td>仮想プロセッサ - 最新世代CPU対応</td>
-                </tr>
-                <tr>
-                    <td>メモリ（RAM）</td>
-                    <td class="highlight">2TB（従来比2倍）</td>
-                    <td>RAM容量 - DDR5対応</td>
-                </tr>
-                <tr>
-                    <td>ストレージ</td>
-                    <td class="highlight">100TB（従来比2倍）</td>
-                    <td>All-Flash SSD構成</td>
-                </tr>
-                <tr>
-                    <td>ネットワーク帯域</td>
-                    <td class="highlight">100Gbps（従来比10倍）</td>
-                    <td>専有帯域 - 次世代ネットワーク</td>
-                </tr>
-                <tr>
-                    <td>GPU <span class="badge">NEW</span></td>
-                    <td class="highlight">NVIDIA A100 x8</td>
-                    <td>AI/機械学習ワークロード対応</td>
-                </tr>
-            </tbody>
-        </table>
-
-        <h2>料金プラン</h2>
-
-        <table>
-            <thead>
-                <tr>
-                    <th>プラン</th>
-                    <th>月額料金</th>
-                    <th>特徴</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>スタンダード</td>
-                    <td>¥100,000</td>
-                    <td>基本プラン</td>
-                </tr>
-                <tr>
-                    <td>プロフェッショナル</td>
-                    <td>¥300,000</td>
-                    <td>高性能プラン</td>
-                </tr>
-                <tr>
-                    <td>エンタープライズ <span class="badge">NEW</span></td>
-                    <td class="highlight">¥800,000</td>
-                    <td>最上位プラン - GPU付き</td>
-                </tr>
-            </tbody>
-        </table>
-
-        <h2>サポート</h2>
-
-        <p>24時間365日の監視サポートを提供しています。</p>
-        <ul>
-            <li>メールサポート: <strong>24時間受付</strong>（従来: 9:00-18:00）</li>
-            <li>電話サポート: <strong>24時間受付</strong>（従来: 9:00-18:00）</li>
-            <li>チャットサポート: <strong>24時間受付</strong> <span class="badge">NEW</span></li>
-            <li>専任エンジニア常駐: エンタープライズプラン限定 <span class="badge">NEW</span></li>
-        </ul>
+<html class="no-js" lang="ja">
+ <head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width,initial-scale=1" name="viewport"/>
+  <link href="images/favicon.png" rel="icon"/>
+  <title>
+   SmartConnect Cloud Platform（Type-V）＜リソースプール型＞サービス仕様書
+  </title>
+  <link href="assets/stylesheets/main.3cba04c6.min.css" rel="stylesheet"/>
+  <link href="assets/stylesheets/palette.06af60db.min.css" rel="stylesheet"/>
+  <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+  <link href="https://fonts.googleapis.com/css?family=Noto+Sans+JP:300,300i,400,400i,700,700i%7CJetBrains+Mono:400,400i,700,700i&amp;display=fallback" rel="stylesheet"/>
+  <style>
+   :root{--md-text-font:"Noto Sans JP";--md-code-font:"JetBrains Mono"}
+  </style>
+  <link href="stylesheets/extra.css" rel="stylesheet"/>
+  <link href="css/style.css" rel="stylesheet"/>
+ </head>
+ <body data-md-color-accent="indigo" data-md-color-primary="indigo" data-md-color-scheme="ntt" dir="ltr">
+  <input autocomplete="off" class="md-toggle" data-md-toggle="drawer" id="__drawer" type="checkbox"/>
+  <input autocomplete="off" class="md-toggle" data-md-toggle="search" id="__search" type="checkbox"/>
+  <label class="md-overlay" for="__drawer">
+  </label>
+  <div data-md-component="skip">
+   <a class="md-skip" href="#1">
+    コンテンツにスキップ
+   </a>
+  </div>
+  <div data-md-component="announce">
+  </div>
+  <header class="md-header md-header--shadow" data-md-component="header">
+   <nav aria-label="ヘッダー" class="md-header__inner md-grid">
+    <a aria-label="SmartConnect Cloud Platform（Type-V）＜リソースプール型＞サービス仕様書" class="md-header__button md-logo" data-md-component="logo" href="." title="SmartConnect Cloud Platform（Type-V）＜リソースプール型＞サービス仕様書">
+     <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+      <path d="M12 3 1 9l11 6 9-4.91V17h2V9M5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82Z">
+      </path>
+     </svg>
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+     <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+      <path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z">
+      </path>
+     </svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+     <div class="md-header__ellipsis">
+      <div class="md-header__topic">
+       <span class="md-ellipsis">
+        SmartConnect Cloud Platform（Type-V）＜リソースプール型＞サービス仕様書
+       </span>
+      </div>
+      <div class="md-header__topic" data-md-component="header-topic">
+       <span class="md-ellipsis">
+        SmartConnect Cloud Platform（Type-V）＜リソースプール型＞サービス仕様書
+       </span>
+      </div>
+     </div>
     </div>
-
-    <footer>
-        <p>© 2026 NTT Communications Corporation. All Rights Reserved.</p>
-        <p>最終更新: 20260120</p>
-    </footer>
-</body>
+   </nav>
+  </header>
+  <div class="md-container" data-md-component="container">
+   <main class="md-main" data-md-component="main">
+    <div class="md-main__inner md-grid">
+     <div class="md-sidebar md-sidebar--primary" data-md-component="navigation">
+      <div class="md-sidebar__scrollwrap">
+       <div class="md-sidebar__inner">
+        <nav aria-label="目次" class="md-nav md-nav--secondary">
+         <label class="md-nav__title" for="__toc">
+          <span class="md-nav__icon md-icon">
+          </span>
+          目次
+         </label>
+         <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix="">
+          <li class="md-nav__item">
+           <a class="md-nav__link" href="#1">
+            <span class="md-ellipsis">
+             1. サービス概要
+            </span>
+           </a>
+           <nav aria-label="1. サービス概要" class="md-nav">
+            <ul class="md-nav__list">
+             <li class="md-nav__item">
+              <a class="md-nav__link" href="#11">
+               <span class="md-ellipsis">
+                1.1 サービスの特徴
+               </span>
+              </a>
+             </li>
+             <li class="md-nav__item">
+              <a class="md-nav__link" href="#12">
+               <span class="md-ellipsis">
+                1.2 サービスメニュー
+               </span>
+              </a>
+             </li>
+            </ul>
+           </nav>
+          </li>
+          <li class="md-nav__item">
+           <a class="md-nav__link" href="#2">
+            <span class="md-ellipsis">
+             2. サービス仕様
+            </span>
+           </a>
+           <nav aria-label="2. サービス仕様" class="md-nav">
+            <ul class="md-nav__list">
+             <li class="md-nav__item">
+              <a class="md-nav__link" href="#21">
+               <span class="md-ellipsis">
+                2.1 データセンター
+               </span>
+              </a>
+             </li>
+             <li class="md-nav__item">
+              <a class="md-nav__link" href="#22">
+               <span class="md-ellipsis">
+                2.2 基盤ソフトウェア
+               </span>
+              </a>
+             </li>
+             <li class="md-nav__item">
+              <a class="md-nav__link" href="#23">
+               <span class="md-ellipsis">
+                2.3 基本リソース
+               </span>
+              </a>
+             </li>
+             <li class="md-nav__item">
+              <a class="md-nav__link" href="#24">
+               <span class="md-ellipsis">
+                2.4 ネットワークオプション
+               </span>
+              </a>
+             </li>
+             <li class="md-nav__item">
+              <a class="md-nav__link" href="#25">
+               <span class="md-ellipsis">
+                2.5 ライセンスオプション
+               </span>
+              </a>
+             </li>
+             <li class="md-nav__item">
+              <a class="md-nav__link" href="#26">
+               <span class="md-ellipsis">
+                2.6 マネジメントオプション
+               </span>
+              </a>
+             </li>
+             <li class="md-nav__item">
+              <a class="md-nav__link" href="#27">
+               <span class="md-ellipsis">
+                2.7 サービス品質
+               </span>
+              </a>
+             </li>
+             <li class="md-nav__item">
+              <a class="md-nav__link" href="#28">
+               <span class="md-ellipsis">
+                2.8 責任分界点
+               </span>
+              </a>
+             </li>
+            </ul>
+           </nav>
+          </li>
+          <li class="md-nav__item">
+           <a class="md-nav__link" href="#3">
+            <span class="md-ellipsis">
+             3. お申し込み（新規・変更・解約）
+            </span>
+           </a>
+           <nav aria-label="3. お申し込み（新規・変更・解約）" class="md-nav">
+            <ul class="md-nav__list">
+             <li class="md-nav__item">
+              <a class="md-nav__link" href="#31">
+               <span class="md-ellipsis">
+                3.1 サービス開始までの期間
+               </span>
+              </a>
+             </li>
+             <li class="md-nav__item">
+              <a class="md-nav__link" href="#32">
+               <span class="md-ellipsis">
+                3.2 サービス開始までの流れ（新規・追加・変更）
+               </span>
+              </a>
+             </li>
+             <li class="md-nav__item">
+              <a class="md-nav__link" href="#33">
+               <span class="md-ellipsis">
+                3.3 送付資料
+               </span>
+              </a>
+             </li>
+            </ul>
+           </nav>
+          </li>
+          <li class="md-nav__item">
+           <a class="md-nav__link" href="#4">
+            <span class="md-ellipsis">
+             4. サポート／お問い合わせ
+            </span>
+           </a>
+           <nav aria-label="4. サポート／お問い合わせ" class="md-nav">
+            <ul class="md-nav__list">
+             <li class="md-nav__item">
+              <a class="md-nav__link" href="#41">
+               <span class="md-ellipsis">
+                4.1 ご契約前のお問い合わせ窓口
+               </span>
+              </a>
+             </li>
+             <li class="md-nav__item">
+              <a class="md-nav__link" href="#42">
+               <span class="md-ellipsis">
+                4.2 ご契約者さま向けお問い合わせ窓口
+               </span>
+              </a>
+             </li>
+             <li class="md-nav__item">
+              <a class="md-nav__link" href="#43">
+               <span class="md-ellipsis">
+                4.3 当社からのご連絡
+               </span>
+              </a>
+             </li>
+            </ul>
+           </nav>
+          </li>
+          <li class="md-nav__item">
+           <a class="md-nav__link" href="#5-1">
+            <span class="md-ellipsis">
+             5. 付録１. 用語の解説
+            </span>
+           </a>
+          </li>
+          <li class="md-nav__item">
+           <a class="md-nav__link" href="#6">
+            <span class="md-ellipsis">
+             6. 変更履歴
+            </span>
+           </a>
+          </li>
+         </ul>
+        </nav>
+       </div>
+      </div>
+     </div>
+     <div class="md-content" data-md-component="content">
+      <article class="md-content__inner md-typeset">
+       <h1>
+        SmartConnect Cloud Platform（Type-V）＜リソースプール型＞サービス仕様書
+       </h1>
+       <h2 id="1">
+        1. サービス概要
+        <a class="headerlink" href="#1" title="Permanent link">
+         ¶
+        </a>
+       </h2>
+       <ul>
+        <li>
+         「SmartConnect Cloud Platform（Type-V）＜リソースプール型＞」（以下、本サービス）は、堅牢なNTTグループ管理のデータセンター内に、豊富な実績を持つVMware製品を用いて、お客さまが必要とするリソース（vCPU・メモリー・データストアなど）に応じた仮想化基盤（以下、リソースプール）をご提供します。
+        </li>
+        <li>
+         お客さまのご利用形態にあわせ、インターネットや閉域網などの多様なネットワーク経由で、仮想化基盤をご利用可能です。
+        </li>
+       </ul>
+       <p>
+        <br/>
+       </p>
+       <h3 id="11">
+        1.1 サービスの特徴
+        <a class="headerlink" href="#11" title="Permanent link">
+         ¶
+        </a>
+       </h3>
+       <h4 id="111">
+        1.1.1 多様なネットワーク接続
+        <a class="headerlink" href="#111" title="Permanent link">
+         ¶
+        </a>
+       </h4>
+       <p>
+        当社が提供しております、「クラウド クロス コネクト」（以下、CXC）とセットでご利用いただくことで、通信事業者が提供する閉域網、学術情報ネットワークSINETや、AWS、Azure等パブリッククラウドと接続することが可能です。
+       </p>
+       <p>
+        <br/>
+       </p>
+       <h4 id="112">
+        1.1.2 信頼性・可用性
+        <a class="headerlink" href="#112" title="Permanent link">
+         ¶
+        </a>
+       </h4>
+       <p>
+        以下の機能を提供することにより、高い信頼性・可用性を実現します。
+       </p>
+       <ol>
+        <li>
+         HA（High Availability）技術を活用して、故障時に自動的に物理サーバーを切り替える機能
+        </li>
+        <li>
+         お客さま任意のタイミングでVMのOSイメージのスナップショットを取得する機能（1世代）
+        </li>
+        <li>
+         VMのOSイメージをスナップショット取得時点へリストアする機能
+        </li>
+        <li>
+         定期的なタイミングで最大3世代のバックアップを自動的に取得する機能（別筐体にもバックアップ取得）
+        </li>
+        <li>
+         物理サーバー、ストレージ、ネットワーク機器等の基盤設備の冗長化
+        </li>
+       </ol>
+       <p>
+        <br/>
+       </p>
+       <h4 id="113">
+        1.1.3 セキュリティ対策
+        <a class="headerlink" href="#113" title="Permanent link">
+         ¶
+        </a>
+       </h4>
+       <p>
+        お客さまごとに論理的にネットワークを分割することで、高いセキュリティを実現します。
+        <br/>
+        また、当社が提供しております「SmartConnect Network &amp; Security」とセットでご利用いただくことで、UTM/WAF/DDoS/LB/VPN等の機能をご利用いただくことが可能です。
+       </p>
+       <p>
+        <br/>
+       </p>
+       <h3 id="12">
+        1.2 サービスメニュー
+        <a class="headerlink" href="#12" title="Permanent link">
+         ¶
+        </a>
+       </h3>
+       <p>
+        本サービスは、「基本リソース」メニューをご契約いただくことで、ご利用いただくことが可能です。
+        <br/>
+        また、追加で各種オプションをご利用いただくことで、仮想マシン（以下、VM）やネットワークの構成を柔軟にカスタマイズすることが可能です。
+       </p>
+       <table border="1" style="border-collapse: collapse" width="1000">
+        <tbody>
+         <tr>
+          <th>
+           メニュー
+          </th>
+          <th>
+           提供内容
+          </th>
+         </tr>
+         <tr>
+          <td>
+           基本リソース
+           <sup>
+            *1
+           </sup>
+          </td>
+          <td>
+           リソースプール機能とポータルサイトの機能を提供します。
+          </td>
+         </tr>
+         <tr>
+          <td>
+           ネットワークオプション
+          </td>
+          <td>
+           VLAN追加や外部接続設定など、お客さまのネットワーク接続をカスタマイズすることが可能です。
+          </td>
+         </tr>
+         <tr>
+          <td>
+           ライセンスオプション
+          </td>
+          <td>
+           SQLライセンスおよびRDSライセンス、FortiVMおよびそのライセンスを提供します。
+          </td>
+         </tr>
+         <tr>
+          <td>
+           マネジメントオプション
+          </td>
+          <td>
+           SSL証明書の取り次ぎ販売、ポータルサイトのアカウント追加等が可能です。
+          </td>
+         </tr>
+        </tbody>
+       </table>
+       <div class="admonition warning">
+        <p class="admonition-title">
+         Warning
+        </p>
+        <ul>
+         <li>
+          *1：必須契約のメニューとなります。
+         </li>
+        </ul>
+       </div>
+       <p>
+        <br/>
+       </p>
+       <h4 id="121">
+        1.2.1 基本リソース
+        <a class="headerlink" href="#121" title="Permanent link">
+         ¶
+        </a>
+       </h4>
+       <p>
+        基本リソースでは、以下メニューが提供されます。
+       </p>
+       <table border="1" style="border-collapse: collapse">
+        <tbody>
+         <tr>
+          <th colspan="2">
+           項目
+          </th>
+          <th>
+           内容
+          </th>
+         </tr>
+         <tr>
+          <td rowspan="2" width="10%">
+           リソースプール作成
+          </td>
+          <td width="25%">
+           リソースプールプラン
+           <sup>
+            *1
+           </sup>
+          </td>
+          <td width="65%">
+           vCPU数とメモリー容量、データストア種別/容量をご指定いただけます。
+          </td>
+         </tr>
+         <tr>
+          <td>
+           有償OSプラン
+          </td>
+          <td>
+           本サービス上でRedHat Enterprise LinuxもしくはWindows Serverを利用いただくためのライセンスを提供します。
+          </td>
+         </tr>
+         <tr>
+          <td colspan="2">
+           リソースプール変更
+          </td>
+          <td>
+           リソースプールプラン、および有償OSプランの変更が可能です。
+          </td>
+         </tr>
+         <tr>
+          <td colspan="2">
+           ポータルサイト
+           <sup>
+            *2
+           </sup>
+          </td>
+          <td>
+           VMの作成/変更/削除/電源操作、スナップショット制御、VM監視の機能をご利用いただけます。
+          </td>
+         </tr>
+         <tr>
+          <td colspan="2">
+           管理機能ネットワーク
+           <sup>
+            *3
+           </sup>
+          </td>
+          <td>
+           お客さまテナントから管理機能部
+           <sup>
+            *4
+           </sup>
+           へアクセスするための専用のネットワークです。
+          </td>
+         </tr>
+        </tbody>
+       </table>
+       <div class="admonition warning">
+        <p class="admonition-title">
+         Warning
+        </p>
+        <ul>
+         <li>
+          *1：必須契約のメニューとなります。
+         </li>
+         <li>
+          *2：ポータルサイトは標準でご利用いただけます。また、ポータルサイトのご利用が必須のサービスとなります。ポータルサイトへのアクセスにつきましては別途費用が発生する場合があります。詳細は「
+          <a href="#2322">
+           ポータルサイトへのアクセス
+          </a>
+          」をご確認ください。
+         </li>
+         <li>
+          *3：管理機能ネットワークは標準でご利用いただけます。
+         </li>
+         <li>
+          *4：NTPサーバやWindowsライセンスのライセンス認証用Proxy等、ご契約のVMから利用できる機能を提供するための機能部です。
+         </li>
+        </ul>
+       </div>
+       <p>
+        <br/>
+       </p>
+       <h4 id="122">
+        1.2.2 ネットワークオプション
+        <a class="headerlink" href="#122" title="Permanent link">
+         ¶
+        </a>
+       </h4>
+       <p>
+        ネットワークオプションでは、以下メニューが提供されます。
+       </p>
+       <table border="1" style="border-collapse: collapse" width="1000">
+        <tbody>
+         <tr>
+          <th colspan="2">
+           項目
+          </th>
+          <th>
+           内容
+          </th>
+         </tr>
+         <tr>
+          <td colspan="2">
+           VLAN（仮想ネットワーク）追加/削除オプション
+          </td>
+          <td>
+           本サービスでご利用可能なVLAN（仮想ネットワーク）の追加/削除を行います。
+           <br/>
+           標準提供分の1VLAN含め、最大20VLANまで追加が可能です（1VLAN単位）。
+          </td>
+         </tr>
+         <tr>
+          <td rowspan="2">
+           外部接続オプション
+          </td>
+          <td>
+           クラウド クロス コネクト 接続設定
+          </td>
+          <td>
+           本サービスでご利用中のVLAN（仮想ネットワーク）に対し、CXCへの接続設定を行います。
+           <br/>
+           設定は1VLAN単位です。
+          </td>
+         </tr>
+         <tr>
+          <td>
+           インターネットコネクティビティ接続設定（/27, /28, /29）
+          </td>
+          <td>
+           本サービスでご利用中のVLAN（仮想ネットワーク）に対し、インターネットへの接続設定（1Gbps ベストエフォート）を行います。
+           <br/>
+           設定は1VLAN単位です。
+          </td>
+         </tr>
+        </tbody>
+       </table>
+       <h4 id="123">
+        1.2.3 ライセンスオプション
+        <a class="headerlink" href="#123" title="Permanent link">
+         ¶
+        </a>
+       </h4>
+       <p>
+        ライセンスオプションでは、以下メニューが提供されます。
+       </p>
+       <table border="1" style="border-collapse: collapse" width="1000">
+        <tbody>
+         <tr>
+          <th>
+           項目
+          </th>
+          <th>
+           内容
+          </th>
+         </tr>
+         <tr>
+          <td>
+           SQL Server（SPLA）
+          </td>
+          <td>
+           Microsoft SQL Serverのライセンスを提供します。
+          </td>
+         </tr>
+         <tr>
+          <td>
+           SQL Server モビリティ
+          </td>
+          <td>
+           お客さま保有のMicrosoft SQL Serverのライセンスを本サービスに持ち込んでご利用いただくことが可能です。
+          </td>
+         </tr>
+         <tr>
+          <td>
+           Remote Desktop Services（SAL）
+          </td>
+          <td>
+           Remote Desktop ServicesのSALライセンスを提供します。
+          </td>
+         </tr>
+         <tr>
+          <td>
+           FortiVM（ファイアウォール・UTM）
+           <sup>
+            *1
+           </sup>
+          </td>
+          <td>
+           Fortinet社のFortiVMおよびライセンスをご提供します。
+          </td>
+         </tr>
+         <tr>
+          <td>
+           FortiVM（ファイアウォール・UTM）_v2
+          </td>
+          <td>
+           Fortinet社のFortiVM（FW・UTM）のライセンスを提供します。
+          </td>
+         </tr>
+        </tbody>
+       </table>
+       <div class="admonition warning">
+        <p class="admonition-title">
+         Warning
+        </p>
+        <ul>
+         <li>
+          *1：2025年3月17日を以って、新規販売を停止いたしました。
+         </li>
+        </ul>
+       </div>
+       <h4 id="124">
+        1.2.4 マネジメントオプション
+        <a class="headerlink" href="#124" title="Permanent link">
+         ¶
+        </a>
+       </h4>
+       <p>
+        マネジメントオプションでは、以下メニューが提供されます。
+       </p>
+       <table border="1" style="border-collapse: collapse" width="1000">
+        <tbody>
+         <tr>
+          <th>
+           項目
+          </th>
+          <th>
+           内容
+          </th>
+         </tr>
+         <tr>
+          <td>
+           ドメイン
+          </td>
+          <td>
+           ドメイン名申請や、維持管理などの作業代行を提供します。
+          </td>
+         </tr>
+         <tr>
+          <td>
+           SSL証明書
+          </td>
+          <td>
+           SSL証明書を取次販売にて提供します。
+          </td>
+         </tr>
+         <tr>
+          <td>
+           ポータルサイト（VCD）アカウント追加
+          </td>
+          <td>
+           標準提供の1アカウントに加え、最大30アカウントまで1アカウント単位での追加が可能です（ポータルサイト用のアカウントになります）。
+          </td>
+         </tr>
+        </tbody>
+       </table>
+       <p>
+        <br/>
+       </p>
+       <h2 id="2">
+        2. サービス仕様
+        <a class="headerlink" href="#2" title="Permanent link">
+         ¶
+        </a>
+       </h2>
+       <h3 id="21">
+        2.1 データセンター
+        <a class="headerlink" href="#21" title="Permanent link">
+         ¶
+        </a>
+       </h3>
+       <p>
+        本サービスが提供するデータセンターは、日本国内に存在するNTTグループ管理のデータセンターを使用しています。
+       </p>
+       <h3 id="22">
+        2.2 基盤ソフトウェア
+        <a class="headerlink" href="#22" title="Permanent link">
+         ¶
+        </a>
+       </h3>
+       <p>
+        本サービスで使用する主な基盤ソフトウェアは以下の通りです。
+        <br/>
+        最新のバージョン情報やアップデートポリシーについては
+        <a href="../scp_type-v_platform_spec/">
+         「基盤ソフトウェアバージョン一覧」
+        </a>
+        をご参照ください。
+       </p>
+       <table border="1" style="border-collapse: collapse" width="500">
+        <tbody>
+         <tr>
+          <th>
+           項目
+          </th>
+          <th>
+           名称
+          </th>
+         </tr>
+         <tr>
+          <td>
+           ハイパーバイザー
+          </td>
+          <td>
+           VMware ESXi（以下、ESXi）
+          </td>
+         </tr>
+         <tr>
+          <td>
+           サーバ管理
+          </td>
+          <td>
+           VMware vCenter Server（以下、vCenter）
+          </td>
+         </tr>
+         <tr>
+          <td>
+           ポータルサイト
+          </td>
+          <td>
+           VMware Cloud Director（以下、VCD）
+          </td>
+         </tr>
+        </tbody>
+       </table>
+       <p>
+        <br/>
+       </p>
+       <h3 id="23">
+        2.3 基本リソース
+        <a class="headerlink" href="#23" title="Permanent link">
+         ¶
+        </a>
+       </h3>
+       <table border="1" style="border-collapse: collapse" width="1000">
+        <tbody>
+         <tr>
+          <th>
+           機能
+          </th>
+          <th>
+           内容
+          </th>
+         </tr>
+         <tr>
+          <td>
+           リソースプール機能
+          </td>
+          <td>
+           申込内容に基づいて、お客さま専用の仮想化基盤を提供します。
+          </td>
+         </tr>
+         <tr>
+          <td>
+           ポータルサイト（VCD）
+           <sup>
+            *1
+           </sup>
+          </td>
+          <td>
+           お客さま専用のポータルサイトを提供します。
+           <br/>
+           VMの作成/変更/削除/操作、スナップショット制御、VM監視などの機能を提供します。
+          </td>
+         </tr>
+         <tr>
+          <td>
+           管理機能ネットワーク
+           <sup>
+            *2
+           </sup>
+          </td>
+          <td>
+           お客さまテナントから管理機能部
+           <sup>
+            *3
+           </sup>
+           へアクセスするための専用のネットワークです。
+          </td>
+         </tr>
+        </tbody>
+       </table>
+       <div class="admonition warning">
+        <p class="admonition-title">
+         Warning
+        </p>
+        <ul>
+         <li>
+          *1：標準提供機能で、ご利用が必須の機能となります。ポータルサイトへのアクセスには、ネットワークオプション（別途費用）が必要な場合があります。詳細は「
+          <a href="#2322">
+           ポータルサイトへのアクセス
+          </a>
+          」をご確認ください。
+         </li>
+         <li>
+          *2：標準提供機能ですが、ご利用は必須ではありません。
+         </li>
+         <li>
+          *3：NTPサーバやWindowsライセンスのライセンス認証用Proxy等、ご契約の仮想マシンから利用できる機能を提供するための機能部です。
+         </li>
+        </ul>
+       </div>
+       <p>
+        <br/>
+       </p>
+       <h4 id="231">
+        2.3.1 リソースプール機能
+        <a class="headerlink" href="#231" title="Permanent link">
+         ¶
+        </a>
+       </h4>
+       <p>
+        以下のメニューから、お客さまのご利用用途合わせ必要リソースをご指定いただきます。各メニューの内容については、仮想化基盤を提供する物理サーバ等の仕様変更に伴い、変更される可能性があります。
+       </p>
+       <table border="1" style="border-collapse: collapse" width="1200">
+        <tbody>
+         <tr>
+          <th colspan="2" rowspan="2">
+           メニュー
+          </th>
+          <th rowspan="2">
+           提供単位
+          </th>
+          <th colspan="3">
+           内容
+          </th>
+          <th rowspan="2">
+           備考
+          </th>
+         </tr>
+         <tr>
+          <th>
+           新規
+          </th>
+          <th>
+           追加
+          </th>
+          <th>
+           削減（削除）
+           <sup>
+            *1
+           </sup>
+          </th>
+         </tr>
+         <tr>
+          <td colspan="2">
+           vCPU
+          </td>
+          <td>
+           1core
+          </td>
+          <td>
+           必要core数をご指定ください。
+          </td>
+          <td>
+           追加したいcore数をご指定ください。
+          </td>
+          <td>
+           削減したいcore数をご指定ください。
+          </td>
+          <td>
+           <ul>
+            <li>
+             Intel Xeon Processorを使用しています。
+            </li>
+            <li>
+             最低1core必要です。
+            </li>
+            <li>
+             1仮想マシンあたり最大24coreまで割り当て可能です。
+            </li>
+           </ul>
+          </td>
+         </tr>
+         <tr>
+          <td colspan="2">
+           メモリー
+          </td>
+          <td>
+           1GB
+          </td>
+          <td>
+           必要メモリー容量をご指定ください。
+          </td>
+          <td>
+           追加したいメモリー容量をご指定ください。
+          </td>
+          <td>
+           削減したいメモリー容量をご指定ください。
+          </td>
+          <td>
+           <ul>
+            <li>
+             1coreあたり最低1GBメモリ必要です。
+            </li>
+            <li>
+             1coreあたり最大4GBメモリまで指定可能です。
+            </li>
+            <li>
+             1仮想マシンあたり最大96GBメモリまで割り当て可能です。
+            </li>
+            <li>
+             768GB以上のメモリを希望される場合は営業担当にご相談ください。
+            </li>
+           </ul>
+          </td>
+         </tr>
+         <tr>
+          <td rowspan="2">
+           データストア
+          </td>
+          <td>
+           種別
+          </td>
+          <td>
+           スタンダード/ライト
+          </td>
+          <td>
+           必要なデータストア種別をご指定ください。
+          </td>
+          <td>
+           追加したいデータストア種別をご指定ください。
+           <br/>
+           同じ種別のデータストアを追加することはできません。
+          </td>
+          <td>
+           削除したいデータストア種別をご指定ください。
+           <br/>
+           スタンダードは削除することができません。
+          </td>
+          <td rowspan="2">
+           <ul>
+            <li>
+             スタンダード/ライトの詳細は
+             <a href="#2311">
+              データストア種別について
+             </a>
+             をご確認ください。
+            </li>
+            <li>
+             スタンダードのご契約は必須です（OSインストール領域はスタンダードのみサポート対象であるため）
+            </li>
+            <li>
+             スタンダード/ライトそれぞれ最大20TBまで指定可能です。
+            </li>
+            <li>
+             <a href="./#2326">
+              スナップショット
+             </a>
+             および
+             <a href="./#2327">
+              プライベートカタログ
+             </a>
+             のデータは、データストア領域に保存されるため、お客さま契約容量が消費されます。
+            </li>
+           </ul>
+          </td>
+         </tr>
+         <tr>
+          <td>
+           容量
+          </td>
+          <td>
+           0.5TB
+          </td>
+          <td>
+           必要なデータストア容量をご指定ください。
+          </td>
+          <td>
+           追加したいデータストア容量をご指定ください。
+          </td>
+          <td>
+           削減したいデータストア容量をご指定ください。
+          </td>
+         </tr>
+         <tr>
+          <td colspan="2">
+           有償OSプラン
+          </td>
+          <td colspan="4">
+           本サービス上でRedHat Enterprise LinuxもしくはWindows Serverを利用いただくためのライセンスを提供します。
+           <br/>
+           詳細は
+           <a href="#2312-os">
+            有償OSプラン
+           </a>
+           を参照ください。
+          </td>
+          <td>
+           －
+          </td>
+         </tr>
+         <tr>
+          <td colspan="2">
+           NIC
+          </td>
+          <td colspan="4">
+           －
+          </td>
+          <td>
+           1仮想マシンあたり最大10NICまで割り当て可能です。
+          </td>
+         </tr>
+         <tr>
+          <td colspan="2">
+           VLAN
+          </td>
+          <td>
+           1VLAN
+          </td>
+          <td>
+           標準で1VLAN利用可能です。
+          </td>
+          <td colspan="2">
+           <a href="#241-vlan">
+            VLAN追加/削除オプション
+           </a>
+           をお申込みください。
+          </td>
+          <td>
+           －
+          </td>
+         </tr>
+         <tr>
+          <td colspan="2">
+           NSX_VLAN（オーバーレイネットワーク）
+          </td>
+          <td>
+           1VLAN
+          </td>
+          <td colspan="3">
+           ポータルサイト上でお客さまにて作成・削除が可能です。
+          </td>
+          <td>
+           <ul>
+            <li>
+             本機能を利用するためには別途お申し込みが必要です。弊社営業担当までご連絡ください。
+            </li>
+            <li>
+             本環境のみで利用可能です。外部接続はできません。
+            </li>
+            <li>
+             20VLANまで作成可能です。
+            </li>
+           </ul>
+          </td>
+         </tr>
+        </tbody>
+       </table>
+       <div class="admonition warning">
+        <p class="admonition-title">
+         Warning
+        </p>
+        <ul>
+         <li>
+          *1：お申込み前に、削減（削除）対象のリソースが未使用であることを確認してください。VM動作への影響、およびデータ損失に関して、当社は一切の責任を負いかねます。
+         </li>
+         <li>
+          仮想マシンへ割り当てられるリソースの総量は、お申し込みリソースの総量を超えることはできません。
+         </li>
+        </ul>
+       </div>
+       <p>
+        <br/>
+       </p>
+       <h5 id="2311">
+        2.3.1.1 データストア種別について
+        <a class="headerlink" href="#2311" title="Permanent link">
+         ¶
+        </a>
+       </h5>
+       <table border="1" style="border-collapse: collapse" width="1000">
+        <tbody>
+         <tr>
+          <th>
+           項目
+          </th>
+          <th>
+           物理媒体
+          </th>
+          <th>
+           推奨用途
+          </th>
+         </tr>
+         <tr>
+          <td>
+           スタンダード
+          </td>
+          <td>
+           SSD等の高速メディア
+          </td>
+          <td>
+           OSやデータベースなど、読み書きが頻繁に発生するもの。
+          </td>
+         </tr>
+         <tr>
+          <td>
+           ライト
+          </td>
+          <td>
+           HDD等の低速メディア
+          </td>
+          <td>
+           アーカイブデータなど、読み書きが頻繁に発生しないもの。
+          </td>
+         </tr>
+        </tbody>
+       </table>
+       <p>
+        <br/>
+       </p>
+       <h5 id="2312-os">
+        2.3.1.2 有償OSプラン
+        <a class="headerlink" href="#2312-os" title="Permanent link">
+         ¶
+        </a>
+       </h5>
+       <p>
+        本サービス上でRedHat Enterprise LinuxもしくはWindows Serverを利用いただくためのライセンスを提供します。詳細仕様は
+        <a href="https://cloud.nttsmc.com/doc/scp/scp_type-v_software_spec_resource-pool/">
+         OS・ミドルウェア設定一覧
+        </a>
+        を参照ください。
+       </p>
+       <table>
+        <tbody>
+         <tr>
+          <th>
+           ライセンス
+          </th>
+          <th>
+           OSバージョン
+          </th>
+          <th>
+           提供方式
+          </th>
+          <th>
+           お客さまライセンス持ち込み可否
+          </th>
+         </tr>
+         <tr>
+          <td>
+           RedHat Enterprise Linux
+          </td>
+          <td>
+           RedHat Enterprise Linux 8.1
+           <br/>
+           RedHat Enterprise Linux 9.1
+          </td>
+          <td rowspan="2">
+           テンプレート形式
+          </td>
+          <td rowspan="2">
+           不可
+          </td>
+         </tr>
+         <tr>
+          <td>
+           Windows Server
+          </td>
+          <td>
+           Windows Server 2019 Standard
+           <br/>
+           Windows Server 2022 Standard
+           <br/>
+           Windows Server 2025 Standard
+          </td>
+         </tr>
+        </tbody>
+       </table>
+       <div class="admonition warning">
+        <p class="admonition-title">
+         Warning
+        </p>
+        <ul>
+         <li>
+          お申込み以外のOS・お申込み以上の数量のVMを作成しないでください。作成された場合、作成されたOS・数量の料金を追加で請求させていただきます。
+         </li>
+         <li>
+          OSサポート終了などの理由で提供OSが変更となる場合があります。
+         </li>
+         <li>
+          OSのメジャーバージョンアップは以下3ステップでの対応となります。お申込みや移行作業についてはお客さまにて実施いただく必要があります。
+          <ol>
+           <li>
+            バージョンアップ先OSを新規お申込み
+           </li>
+           <li>
+            旧VMから新VMへの移行作業
+           </li>
+           <li>
+            バージョンアップ元OSを解約申し込み
+           </li>
+          </ol>
+         </li>
+         <li>
+          本サービス運用の為、当社規定のOS仕様書に記載の管理用ソフトウェアをインストールしています。お客さまにて管理用ソフトウェアの削除や推奨外の設定変更を行った場合、サポート対象外とさせていただきます。
+         </li>
+         <li>
+          HA機能等の運用を行うにあたり、VMに対し強制的に時刻同期を行う場合があります。
+         </li>
+        </ul>
+       </div>
+       <p>
+        <br/>
+       </p>
+       <h4 id="232-vcd">
+        2.3.2 ポータルサイト（VCD）
+        <a class="headerlink" href="#232-vcd" title="Permanent link">
+         ¶
+        </a>
+       </h4>
+       <p>
+        本サービスご利用にあたり、VM操作等に必要なお客さま専用のポータルサイトをご提供いたします。全てのお客さまについて標準でご利用いただけます。
+        <br/>
+        ポータルサイト（VCD）へのアクセスにはネットワークオプション（別途費用）が必要となる場合がございます。詳細は「
+        <a href="#2322">
+         ポータルサイトへのアクセス
+        </a>
+        」をご確認ください。
+       </p>
+       <table border="1" style="border-collapse: collapse" width="1000">
+        <tbody>
+         <tr>
+          <th>
+           項目
+          </th>
+          <th>
+           内容
+          </th>
+         </tr>
+         <tr>
+          <td>
+           ポータルサイトアカウント
+          </td>
+          <td>
+           標準で1アカウントご提供いたします。
+           <br/>
+           詳細は
+           <a href="#2321">
+            ポータルサイトアカウント
+           </a>
+           を参照ください。
+          </td>
+         </tr>
+         <tr>
+          <td>
+           ポータルサイトへのアクセス
+          </td>
+          <td>
+           インターネット/閉域経由のポータルアクセスが可能です。
+           <br/>
+           詳細は
+           <a href="#2322">
+            ポータルサイトへのアクセス
+           </a>
+           を参照ください。
+          </td>
+         </tr>
+         <tr>
+          <td>
+           VM作成等
+          </td>
+          <td>
+           VMの作成・変更・削除が可能です。
+           <br/>
+           詳細は
+           <a href="#2323-vm">
+            VM作成等
+           </a>
+           を参照ください。
+          </td>
+         </tr>
+         <tr>
+          <td>
+           VM操作
+          </td>
+          <td>
+           VMの起動・停止・強制停止・再起動・コンソール起動が可能です。
+           <br/>
+           詳細は
+           <a href="#2324-vm">
+            VM操作
+           </a>
+           を参照ください。
+          </td>
+         </tr>
+         <tr>
+          <td>
+           VM監視
+          </td>
+          <td>
+           VMのリソース状況（vCPU・メモリー・仮想DISK）の確認が可能です。
+           <br/>
+           詳細は
+           <a href="#2325-vm">
+            VM監視
+           </a>
+           を参照ください。
+          </td>
+         </tr>
+         <tr>
+          <td>
+           スナップショット制御
+          </td>
+          <td>
+           スナップショットの取得・削除・リストアが可能です。
+           <br/>
+           詳細は
+           <a href="#2326">
+            スナップショット制御
+           </a>
+           を参照ください。
+          </td>
+         </tr>
+         <tr>
+          <td>
+           カタログ
+          </td>
+          <td>
+           各種テンプレート/ISOイメージが存在する領域にアクセスすることができます。
+           <br/>
+           詳細は
+           <a href="#2327">
+            カタログ
+           </a>
+           を参照ください。
+          </td>
+         </tr>
+         <tr>
+          <td>
+           NSX_VLAN作成等
+          </td>
+          <td>
+           NSX_VLANの作成・変更・削除が可能です。
+           <br/>
+           詳細は
+           <a href="#2328-nsx_vlan">
+            NSX_VLAN作成等
+           </a>
+           を参照ください。
+          </td>
+         </tr>
+         <tr>
+          <td>
+           リソースプール監視
+           <a>
+            *1
+           </a>
+          </td>
+          <td>
+           リソースプール等のリソース状況（vCPU・メモリー・仮想DISK）の確認が可能です。
+           <br/>
+           詳細は
+           <a href="#2329">
+            リソースプール監視
+           </a>
+           を参照ください。
+          </td>
+         </tr>
+        </tbody>
+       </table>
+       <div class="admonition warning">
+        <p class="admonition-title">
+         Warning
+        </p>
+        <ul>
+         <li>
+          <a href="https://cloud.nttsmc.com/doc/scp/scp_type-v_mnl_resource-pool/">
+           ポータルサイト操作マニュアル
+          </a>
+          に記載の禁止事項は、実施しないでください。禁止事項を実施したことによる影響（VM動作、データ損失等）について、当社は一切の責任を負いかねます。
+         </li>
+         <li>
+          *1：本機能を利用するためには別途お申し込みが必要です。弊社営業担当までご連絡ください。
+         </li>
+        </ul>
+       </div>
+       <p>
+        <br/>
+       </p>
+       <h5 id="2321">
+        2.3.2.1 ポータルサイトアカウント
+        <a class="headerlink" href="#2321" title="Permanent link">
+         ¶
+        </a>
+       </h5>
+       <ul>
+        <li>
+         標準1アカウント、最大30アカウントの利用が可能です。アカウント数を増やしたい場合は、「
+         <a href="#261-vcd">
+          ポータルサイト（VCD）アカウント追加/削除
+         </a>
+         」を参照ください。
+        </li>
+        <li>
+         複数ユーザでのアカウント使い回しはサポート対象外となります。
+        </li>
+        <li>
+         アカウント毎にメールアドレスの設定、および認証アプリの設定が必要となります。メールアドレスおよび認証アプリはお客さまでご準備頂く必要があります。
+        </li>
+       </ul>
+       <div class="admonition warning">
+        <p class="admonition-title">
+         Warning
+        </p>
+        <ul>
+         <li>
+          アカウントを削除する際は、事前に対象アカウントで作成されたVMおよびvAppの所有権を別アカウントに変更して頂く必要があります。所有権の変更方法につきましては、「
+          <a href="https://cloud.nttsmc.com/doc/scp/scp_type-v_mnl_resource-pool/">
+           ポータルサイト操作マニュアル
+          </a>
+          」をご確認ください。
+         </li>
+        </ul>
+       </div>
+       <p>
+        <br/>
+       </p>
+       <h5 id="2322">
+        2.3.2.2 ポータルサイトへのアクセス
+        <a class="headerlink" href="#2322" title="Permanent link">
+         ¶
+        </a>
+       </h5>
+       <p>
+        お客さまがVMを操作するためのポータルサイト（VCD）へのアクセスするためには、以下の2パターンのいずれかの接続が必須となります。
+       </p>
+       <table border="1" style="border-collapse: collapse" width="1000">
+        <tbody>
+         <tr>
+          <th>
+          </th>
+          <th>
+           1. インターネット経由（推奨）
+          </th>
+          <th>
+           2. 閉域網（CXC）経由
+          </th>
+         </tr>
+         <tr>
+          <td>
+           特徴
+          </td>
+          <td>
+           インターネットに接続された端末からポータルサイトへアクセスすることができます。
+          </td>
+          <td>
+           ポータルサイトへインターネットを経由せずアクセスすることができます。
+          </td>
+         </tr>
+         <tr>
+          <td>
+           ポータル接続経路
+          </td>
+          <td>
+           インターネット経由
+          </td>
+          <td>
+           閉域網（CXC）経由
+          </td>
+         </tr>
+         <tr>
+          <td>
+           必要となる契約
+          </td>
+          <td>
+           なし
+          </td>
+          <td>
+           当社提供サービスであるCXCと本サービスの契約が必要となります。
+           <br/>
+           CXCのサービス詳細については
+           <a href="https://cloud.nttsmc.com/doc/cxc_spec.pdf">
+            CXCサービス仕様書
+           </a>
+           をご確認ください。
+          </td>
+         </tr>
+         <tr>
+          <td>
+           必要となる設定
+          </td>
+          <td>
+           なし
+          </td>
+          <td>
+           ・ポータルサイトに割り当てるためのIPアドレスが3つ必要です。
+           <br/>
+           ・ポータルサイト接続端末には、予めポータルサイトのFQDNが解決できるよう設定する必要があります。
+          </td>
+         </tr>
+         <tr>
+          <td>
+           認証方法
+          </td>
+          <td>
+           二要素認証：ログインID＋パスワード＋Time-based One-time Password（認証アプリ）
+          </td>
+         </tr>
+         <tr>
+          <td>
+           使用ポート
+          </td>
+          <td>
+           443/TCP
+          </td>
+         </tr>
+        </tbody>
+       </table>
+       <p>
+        <br/>
+       </p>
+       <h5 id="2323-vm">
+        2.3.2.3 VM作成等
+        <a class="headerlink" href="#2323-vm" title="Permanent link">
+         ¶
+        </a>
+       </h5>
+       <table border="1" style="border-collapse: collapse" width="1000">
+        <tbody>
+         <tr>
+          <th>
+           項目
+          </th>
+          <th>
+           内容
+          </th>
+         </tr>
+         <tr>
+          <td>
+           VMの作成・変更
+          </td>
+          <td>
+           <ul>
+            <li>
+             CPUコア数・メモリ容量・ディスク容量・ポートグループ（VLAN）等を指定して、VMを作成することができます。
+            </li>
+            <li>
+             作成済みのVMに対して、上記設定を変更することができます。
+            </li>
+           </ul>
+          </td>
+         </tr>
+         <tr>
+          <td>
+           VMの削除
+          </td>
+          <td>
+           作成済みのVMを削除することができます。
+          </td>
+         </tr>
+        </tbody>
+       </table>
+       <p>
+        <br/>
+       </p>
+       <h5 id="2324-vm">
+        2.3.2.4 VM操作
+        <a class="headerlink" href="#2324-vm" title="Permanent link">
+         ¶
+        </a>
+       </h5>
+       <table border="1" style="border-collapse: collapse" width="1000">
+        <tbody>
+         <tr>
+          <th>
+           項目
+          </th>
+          <th>
+           内容
+          </th>
+         </tr>
+         <tr>
+          <td>
+           VMの起動状態の確認
+          </td>
+          <td>
+           「停止中」「起動中」のどちらの状態か、確認できます。
+          </td>
+         </tr>
+         <tr>
+          <td>
+           VMの起動
+          </td>
+          <td>
+           「停止中」のVMを起動することができます（OSも起動します）。
+          </td>
+         </tr>
+         <tr>
+          <td>
+           VMの停止
+          </td>
+          <td>
+           「起動中」のVMを停止することができます（OSはシャットダウンされます）。
+          </td>
+         </tr>
+         <tr>
+          <td>
+           VMの強制停止
+          </td>
+          <td>
+           「起動中」のVMを強制停止することができます（OSはシャットダウンされます）。
+          </td>
+         </tr>
+         <tr>
+          <td>
+           VMの再起動
+          </td>
+          <td>
+           「起動中」のVMを再起動することができます（OSも再起動されます）。
+          </td>
+         </tr>
+         <tr>
+          <td>
+           コンソール起動
+          </td>
+          <td>
+           「起動中」のVMにコンソール接続し、VMを操作いただけます。
+          </td>
+         </tr>
+        </tbody>
+       </table>
+       <p>
+        <br/>
+       </p>
+       <h5 id="2325-vm">
+        2.3.2.5 VM監視
+        <a class="headerlink" href="#2325-vm" title="Permanent link">
+         ¶
+        </a>
+       </h5>
+       <table border="1" style="border-collapse: collapse" width="1000">
+        <tbody>
+         <tr>
+          <th>
+           項目
+          </th>
+          <th>
+           内容
+          </th>
+         </tr>
+         <tr>
+          <td>
+           VM監視
+           <sup>
+            *1
+           </sup>
+          </td>
+          <td>
+           VM単位でvCPU・メモリー・仮想DISKの使用率等をグラフで描画することが可能です。
+          </td>
+         </tr>
+        </tbody>
+       </table>
+       <div class="admonition warning">
+        <p class="admonition-title">
+         Warning
+        </p>
+        <ul>
+         <li>
+          *1：メール通知等の設定はできません。
+         </li>
+        </ul>
+       </div>
+       <p>
+        <br/>
+       </p>
+       <h5 id="2326">
+        2.3.2.6 スナップショット制御（スナップショットの取得・削除・リストア）
+        <a class="headerlink" href="#2326" title="Permanent link">
+         ¶
+        </a>
+       </h5>
+       <table border="1" style="border-collapse: collapse" width="1000">
+        <tbody>
+         <tr>
+          <th>
+           項目
+          </th>
+          <th>
+           内容
+          </th>
+         </tr>
+         <tr>
+          <td>
+           スナップショットの取得状況確認
+          </td>
+          <td>
+           スナップショットを取得している場合、その取得日時が確認できます。
+          </td>
+         </tr>
+         <tr>
+          <td>
+           スナップショットの取得
+          </td>
+          <td>
+           スナップショットを取得していない場合のみ、操作時点のスナップショットを取得できます。スナップショットを取得している場合、スナップショットの削除を実施したのち、スナップショットの取得が可能となります。
+          </td>
+         </tr>
+         <tr>
+          <td>
+           スナップショットの削除
+          </td>
+          <td>
+           スナップショットを取得している場合、スナップショットの削除が実施できます。スナップショットの削除には、変更データ容量に応じて数時間以上かかる場合もございます。
+          </td>
+         </tr>
+         <tr>
+          <td>
+           スナップショットのリストア
+          </td>
+          <td>
+           スナップショットを取得している場合、スナップショット取得時点にVMをリストアすることができます。リストア操作時点のVMのOSイメージは保持されません（削除されます）。
+          </td>
+         </tr>
+        </tbody>
+       </table>
+       <p>
+        <br/>
+       </p>
+       <p>
+        <strong>
+         【スナップショット機能の詳細】
+        </strong>
+       </p>
+       <table border="1" style="border-collapse: collapse" width="1000">
+        <tbody>
+         <tr>
+          <th>
+           項目
+          </th>
+          <th>
+           スナップショット
+          </th>
+         </tr>
+         <tr>
+          <td>
+           取得対象
+          </td>
+          <td>
+           VM単位
+          </td>
+         </tr>
+         <tr>
+          <td>
+           取得タイミング
+          </td>
+          <td>
+           任意
+          </td>
+         </tr>
+         <tr>
+          <td>
+           作業実施者
+          </td>
+          <td>
+           お客さま
+          </td>
+         </tr>
+         <tr>
+          <td>
+           取得方法
+          </td>
+          <td>
+           ポータルサイトからの手動操作
+          </td>
+         </tr>
+         <tr>
+          <td>
+           世代管理数
+          </td>
+          <td>
+           1世代
+          </td>
+         </tr>
+         <tr>
+          <td>
+           取得したスナップショットへのリストア作業
+          </td>
+          <td>
+           ポータルサイトからの手動操作
+          </td>
+         </tr>
+         <tr>
+          <td>
+           リストア単位
+          </td>
+          <td>
+           VM単位
+          </td>
+         </tr>
+        </tbody>
+       </table>
+       <div class="admonition warning">
+        <p class="admonition-title">
+         Warning
+        </p>
+        <ul>
+         <li>
+          スナップショットのデータは、データストア領域に保存されるため、お客さま契約容量が消費されます。
+         </li>
+         <li>
+          スナップショット取得時、対象の仮想マシンに割り当てられているディスクサイズ分、データストアに空き容量がない場合、スナップショットの取得に失敗します。
+         </li>
+         <li>
+          スナップショットの取得により動作保障を受けられなくなるソフトウェア製品があります。ご利用のソフトウェア仕様書等を十分にご確認の上、ご利用ください。
+         </li>
+         <li>
+          スナップショットを72時間以上保持することは非推奨となります。ご利用後は速やかに削除願います。
+          <br/>
+          （参考）https://kb.vmware.com/s/article/1025279?lang=ja
+         </li>
+         <li>
+          当社サービス運用上必要と判断した場合には、取得からの期間依らずスナップショットの削除を行う場合があります。
+         </li>
+         <li>
+          スナップショットの削除の際、一時的にVMに平常よりも高い負荷がかかり、VM動作に影響が出る場合があります。
+         </li>
+         <li>
+          スナップショットの削除の際、変更データ容量により削除に数時間以上かかる場合があります。
+         </li>
+        </ul>
+       </div>
+       <p>
+        <br/>
+       </p>
+       <h5 id="2327">
+        2.3.2.7 カタログ
+        <a class="headerlink" href="#2327" title="Permanent link">
+         ¶
+        </a>
+       </h5>
+       <p>
+        各種テンプレート/ISOイメージが存在する領域にアクセスすることができます。
+       </p>
+       <table>
+        <tbody>
+         <tr>
+          <th>
+           項目
+          </th>
+          <th>
+           概要
+          </th>
+          <th>
+           内容
+          </th>
+         </tr>
+         <tr>
+          <td>
+           一般公開カタログ
+           <sup>
+            *1
+           </sup>
+          </td>
+          <td>
+           標準で提供するISOイメージが存在するカタログ
+          </td>
+          <td>
+           <ul>
+            <li>
+             バックアップサービスのブータブルメディア
+            </li>
+           </ul>
+          </td>
+         </tr>
+         <tr>
+          <td>
+           限定公開カタログ
+          </td>
+          <td>
+           有償OSプラン・ライセンスオプションをお申込みのお客さまのみアクセス可能カタログ
+           <br/>
+           お申込みのプラン・オプションに関連するテンプレートが存在
+          </td>
+          <td>
+           <ul>
+            <li>
+             RedHat Enterprise Linux
+            </li>
+            <li>
+             Windows Server
+            </li>
+            <li>
+             SQL Server（SPLA）
+            </li>
+            <li>
+             Remote Desktop Services（SAL）ライセンスサーバー
+            </li>
+            <li>
+             FortiVM（ファイアウォール・UTM）
+            </li>
+           </ul>
+          </td>
+         </tr>
+         <tr>
+          <td>
+           プライベートカタログ
+           <sup>
+            *2
+           </sup>
+          </td>
+          <td>
+           お客さま作成・所有のテンプレートやISOイメージを配置できる領域
+          </td>
+          <td>
+           お客さまがアップロードしたテンプレート・ISOイメージ
+           <br/>
+           ※ お客さま契約のデータストア容量が消費されます。
+          </td>
+         </tr>
+        </tbody>
+       </table>
+       <div class="admonition warning">
+        <p class="admonition-title">
+         Warning
+        </p>
+        <ul>
+         <li>
+          *1：一般公開カタログに配置されるISOイメージは予告なく変更される場合があります。
+         </li>
+         <li>
+          *2：プライベートカタログはお客さま契約のデータストア領域に存在するため、お客さま契約容量が消費されます。
+         </li>
+        </ul>
+       </div>
+       <p>
+        <br/>
+       </p>
+       <h5 id="2328-nsx_vlan">
+        2.3.2.8 NSX_VLAN作成等
+        <a class="headerlink" href="#2328-nsx_vlan" title="Permanent link">
+         ¶
+        </a>
+       </h5>
+       <table border="1" style="border-collapse: collapse" width="1000">
+        <tbody>
+         <tr>
+          <th>
+           項目
+          </th>
+          <th>
+           内容
+          </th>
+         </tr>
+         <tr>
+          <td>
+           NSX_VLAN
+           <a>
+            *1
+           </a>
+           の作成・変更
+          </td>
+          <td>
+           <ul>
+            <li>
+             本環境のみで利用可能なVLANを作成することができます
+             <a>
+              *2
+             </a>
+             。
+            </li>
+            <li>
+             作成済みのVLANに対して、上記設定を変更することができます。
+            </li>
+           </ul>
+          </td>
+         </tr>
+         <tr>
+          <td>
+           NSX_VLAN
+           <a>
+            *1
+           </a>
+           の削除
+          </td>
+          <td>
+           作成済みのNSX_VLANを削除することができます。
+          </td>
+         </tr>
+        </tbody>
+       </table>
+       <div class="admonition warning">
+        <p class="admonition-title">
+         Warning
+        </p>
+        <ul>
+         <li>
+          *1：NSX_VLANは本環境のみで利用可能です。外部接続はできません。
+         </li>
+         <li>
+          *2：20VLANまで作成可能です。21VLAN以上は作成いただけません。
+         </li>
+        </ul>
+       </div>
+       <p>
+        <br/>
+       </p>
+       <h5 id="2329">
+        2.3.2.9 リソースプール監視
+        <a class="headerlink" href="#2329" title="Permanent link">
+         ¶
+        </a>
+       </h5>
+       <table border="1" style="border-collapse: collapse" width="1000">
+        <tbody>
+         <tr>
+          <th>
+           項目
+          </th>
+          <th>
+           内容
+          </th>
+         </tr>
+         <tr>
+          <td>
+           リソースプール監視
+           <sup>
+            *1*2
+           </sup>
+          </td>
+          <td>
+           リソースプールもしくはVM単位でvCPU・メモリー・仮想DISKの使用率等をグラフで描画することが可能です。
+          </td>
+         </tr>
+        </tbody>
+       </table>
+       <div class="admonition warning">
+        <p class="admonition-title">
+         Warning
+        </p>
+        <ul>
+         <li>
+          *1：メール通知等の設定はできません。
+         </li>
+         <li>
+          *2：本機能を利用するためには別途お申し込みが必要です。弊社営業担当までご連絡ください。
+         </li>
+        </ul>
+       </div>
+       <p>
+        <br/>
+       </p>
+       <h4 id="233">
+        2.3.3 管理機能ネットワーク
+        <a class="headerlink" href="#233" title="Permanent link">
+         ¶
+        </a>
+       </h4>
+       <p>
+        管理機能ネットワーク（以下、管理機能NW）は、お客さまVMから管理機能部へアクセスするための専用のネットワークです。このネットワークは標準でご利用いただくことができます。
+       </p>
+       <p>
+        <br/>
+       </p>
+       <p>
+        <strong>
+         ＜イメージ＞
+        </strong>
+        <br/>
+        <img alt="image.png" src="img/63e4cb9894ef259058b13735"/>
+       </p>
+       <p>
+        <br/>
+       </p>
+       <p>
+        <strong>
+         ◆管理機能NW詳細
+        </strong>
+        <br/>
+        管理機能NWの詳細は以下の通りです。管理機能NWは本サービス以外で利用することはできません。
+        <sup>
+         *1
+        </sup>
+       </p>
+       <table border="1" style="border-collapse: collapse" width="1000">
+        <tbody>
+         <tr>
+          <th>
+           項目
+          </th>
+          <th>
+           内容
+          </th>
+         </tr>
+         <tr>
+          <td>
+           ネットワークアドレス
+          </td>
+          <td>
+           198.18.0.0/22
+          </td>
+         </tr>
+         <tr>
+          <td>
+           ゲートウェイIP
+          </td>
+          <td>
+           無し
+          </td>
+         </tr>
+         <tr>
+          <td>
+           IPアドレス設定方法
+          </td>
+          <td>
+           自動割り当て（DHCP）
+          </td>
+         </tr>
+         <tr>
+          <td>
+           IPアドレス割り当てプール
+           <sup>
+            *2
+           </sup>
+          </td>
+          <td>
+           198.18.0.1～198.18.1.255
+          </td>
+         </tr>
+         <tr>
+          <td>
+           DNSサーバー
+          </td>
+          <td>
+           無し
+          </td>
+         </tr>
+        </tbody>
+       </table>
+       <div class="admonition warning">
+        <p class="admonition-title">
+         Warning
+        </p>
+        <ul>
+         <li>
+          *1：CXCを用いた他サービスとの接続等は不可となります。
+         </li>
+         <li>
+          *2：お客さまVMに割り当てられるアドレス範囲となります。
+         </li>
+        </ul>
+       </div>
+       <p>
+        <br/>
+       </p>
+       <p>
+        <strong>
+         【管理機能部】
+        </strong>
+        <br/>
+        管理機能部はライセンス認証等、ご利用のVMから利用できる機能を提供するための機能部です。各VMは管理機能NWを経由して、管理機能部を利用することができます。提供される機能は以下の通りです。
+       </p>
+       <table border="1" style="border-collapse: collapse" width="1000">
+        <tbody>
+         <tr>
+          <th>
+           利用できる機能
+          </th>
+          <th>
+           IPアドレス
+          </th>
+          <th>
+           ポート番号
+          </th>
+          <th>
+           説明
+          </th>
+         </tr>
+         <tr>
+          <td>
+           NTPサーバー
+          </td>
+          <td>
+           198.18.2.1
+          </td>
+          <td>
+           123/UDP
+          </td>
+          <td>
+           ―
+          </td>
+         </tr>
+         <tr>
+          <td>
+           Windowsライセンスのライセンス認証用Proxy
+          </td>
+          <td>
+           198.18.2.10
+          </td>
+          <td>
+           3128/TCP
+          </td>
+          <td>
+           Windows Serverのライセンス認証に利用可能なProxyです。
+          </td>
+         </tr>
+         <tr>
+          <td>
+           バックアップサービス（Acronis Cyber Protect Cloud）接続用Proxy
+          </td>
+          <td>
+           198.18.2.11
+          </td>
+          <td>
+           3128/TCP
+          </td>
+          <td>
+           <a href="https://cloud.nttsmc.com/doc/bak/bak_spec/#21">
+            バックアップサービス
+           </a>
+           でご提供のAcronis Cyber Protect Cloud利用時
+           <sup>
+            *1
+           </sup>
+           に利用可能です。
+          </td>
+         </tr>
+         <tr>
+          <td>
+           Red Hat Update Infrastructure（RHUI）
+          </td>
+          <td>
+           198.18.2.20
+          </td>
+          <td>
+           443/TCP
+          </td>
+          <td>
+           Redhat Enterprise Linux利用時に利用可能です。
+          </td>
+         </tr>
+         <tr>
+          <td>
+           スマートコネクト CI/マネージドサービス　標準監視ツール接続用Proxy
+          </td>
+          <td>
+           198.18.2.13
+          </td>
+          <td>
+           3128/TCP
+          </td>
+          <td>
+           <a href="https://cloud.nttsmc.com/doc/cimng_spec.pdf">
+            スマートコネクト CI/マネージドサービス
+           </a>
+           でご提供の標準監視ツール利用時
+           <sup>
+            *2
+           </sup>
+           に利用可能です。
+          </td>
+         </tr>
+        </tbody>
+       </table>
+       <div class="admonition warning">
+        <p class="admonition-title">
+         Warning
+        </p>
+        <ul>
+         <li>
+          *1：バックアップサービス以外でお客さま保有のAcronis Cyber Protect Cloudライセンスを持ち込みされる場合はご利用いただけません。
+         </li>
+         <li>
+          *2：スマートコネクト CI/マネージドサービス以外でお客さま保有の監視ツールを持ち込みされる場合はご利用いただけません。
+         </li>
+        </ul>
+       </div>
+       <p>
+        <br/>
+       </p>
+       <h3 id="24">
+        2.4 ネットワークオプション
+        <a class="headerlink" href="#24" title="Permanent link">
+         ¶
+        </a>
+       </h3>
+       <p>
+        ネットワークに関するカスタマイズや追加機能を提供します。お客さまが選択されたネットワーク接続やVM間の接続構成を変更することが可能です。
+       </p>
+       <p>
+        <strong>
+         ◆メニュー
+        </strong>
+       </p>
+       <table border="1" style="border-collapse: collapse" width="1000">
+        <tbody>
+         <tr>
+          <th colspan="2">
+           項目
+          </th>
+          <th>
+           提供内容
+          </th>
+         </tr>
+         <tr>
+          <td colspan="2">
+           VLAN（仮想ネットワーク）追加/削除オプション
+          </td>
+          <td>
+           <ul>
+            <li>
+             VLANの追加/削除を行います。
+            </li>
+            <li>
+             標準提供の1VLANを含め、最大20VLANまで追加が可能です（管理機能NW除く）。
+            </li>
+            <li>
+             追加は1VLAN単位です。
+            </li>
+           </ul>
+          </td>
+         </tr>
+         <tr>
+          <td rowspan="2">
+           外部接続オプション
+           <a>
+            *1
+           </a>
+          </td>
+          <td>
+           クラウド クロス コネクト 接続設定
+          </td>
+          <td>
+           <ul>
+            <li>
+             本サービスでご利用中のVLAN（仮想ネットワーク）に対し、CXCへの接続設定を行います。
+            </li>
+            <li>
+             設定は1VLAN単位となります。
+            </li>
+           </ul>
+          </td>
+         </tr>
+         <tr>
+          <td>
+           インターネットコネクティビティ接続設定
+          </td>
+          <td>
+           <ul>
+            <li>
+             本サービスでご利用中のVLAN（仮想ネットワーク）に対し、インターネットへの接続設定（1Gbps ベストエフォート）を行います。
+            </li>
+            <li>
+             設定は1VLAN単位となります。
+            </li>
+           </ul>
+          </td>
+         </tr>
+        </tbody>
+       </table>
+       <div class="admonition warning">
+        <p class="admonition-title">
+         Warning
+        </p>
+        <ul>
+         <li>
+          以下のアドレス帯を含むネットワークは、本サービスでご利用頂くことができません。
+          <ul>
+           <li>
+            <code>
+             169.254.0.0/25
+            </code>
+           </li>
+           <li>
+            <code>
+             100.64.0.0/10
+            </code>
+           </li>
+           <li>
+            <code>
+             198.18.0.0/15
+            </code>
+           </li>
+          </ul>
+         </li>
+         <li>
+          *1：NSX_VLANに対して本オプションはご利用いただけません。
+         </li>
+        </ul>
+       </div>
+       <p>
+        <br/>
+       </p>
+       <h4 id="241-vlan">
+        2.4.1 VLAN（仮想ネットワーク）追加/削除オプション
+        <a class="headerlink" href="#241-vlan" title="Permanent link">
+         ¶
+        </a>
+       </h4>
+       <p>
+        本サービス内でご利用可能なVLANを追加/削除します。お客さまあたり、標準で1VLANを提供しております。2VLAN以上に追加する場合や削除する場合にお申込みください。
+       </p>
+       <table border="1" style="border-collapse: collapse" width="1000">
+        <tbody>
+         <tr>
+          <th>
+           項目
+          </th>
+          <th>
+           オプション単位
+          </th>
+          <th>
+           内容・注意事項
+          </th>
+         </tr>
+         <tr>
+          <td>
+           VLAN（仮想ネットワーク）追加
+          </td>
+          <td>
+           1VLAN単位
+          </td>
+          <td>
+           <ul>
+            <li>
+             VMで利用できるVLANを追加することが可能です。
+            </li>
+            <li>
+             本サービス1契約あたり最大で20VLANになるまで追加することが可能です。
+            </li>
+            <li>
+             VLAN番号の指定はできません。
+            </li>
+           </ul>
+          </td>
+         </tr>
+         <tr>
+          <td>
+           VLAN（仮想ネットワーク）削除
+          </td>
+          <td>
+           1VLAN単位
+          </td>
+          <td>
+           <ul>
+            <li>
+             追加されたVLANを削除することが可能です。
+            </li>
+            <li>
+             標準提供VLANは解約（削除）することはできません。
+            </li>
+           </ul>
+          </td>
+         </tr>
+        </tbody>
+       </table>
+       <p>
+        <br/>
+       </p>
+       <h4 id="242">
+        2.4.2 外部接続オプション（クラウド クロス コネクト接続設定）
+        <a class="headerlink" href="#242" title="Permanent link">
+         ¶
+        </a>
+       </h4>
+       <p>
+        サービスでご利用中のVLANと、CXCを接続するオプションとなります。
+        <br/>
+        CXCとセットでお申し込みいただくことで、通信事業者が提供する閉域網や、学術情報ネットワークSINET、NTTビジネスソリューションズ社が提供するAQstageネットワーク、AWS、Azure、GCP、Enterprise Cloud等パブリッククラウドと接続することが可能です。
+       </p>
+       <p>
+        <strong>
+         ◆クラウド クロス コネクト接続設定
+        </strong>
+       </p>
+       <table border="1" style="border-collapse: collapse" width="1000">
+        <tbody>
+         <tr>
+          <th>
+           項目
+          </th>
+          <th>
+           オプション単位
+          </th>
+          <th>
+           内容・注意事項
+          </th>
+         </tr>
+         <tr>
+          <td>
+           クラウド クロス コネクト接続設定
+          </td>
+          <td>
+           1VLAN単位
+          </td>
+          <td>
+           <ul>
+            <li>
+             本サービスでご利用中のVLANごとにお申し込みいただく必要があります。
+            </li>
+            <li>
+             お申し込みいただく場合には、接続対象のVLANおよび接続先サービスを指定していただきます。
+             <sup>
+              *1
+             </sup>
+             <sup>
+              *2
+             </sup>
+            </li>
+           </ul>
+          </td>
+         </tr>
+        </tbody>
+       </table>
+       <div class="admonition warning">
+        <p class="admonition-title">
+         Warning
+        </p>
+        <ul>
+         <li>
+          *1：接続先サービスおよび接続仕様は
+          <a href="https://cloud.nttsmc.com/doc/cxc_spec.pdf">
+           CXCサービス仕様書
+          </a>
+          仕様をご参照ください。
+         </li>
+         <li>
+          *2：同じVLANに対して「クラウド クロス コネクト接続設定」と「インターネットコネクティビティ接続設定」の両方を設定することはできません。
+         </li>
+         <li>
+          NSX_VLANに対して本オプションはご利用いただけません。
+         </li>
+        </ul>
+       </div>
+       <p>
+        <br/>
+       </p>
+       <h4 id="243">
+        2.4.3 外部接続オプション（インターネットコネクティビティ接続設定）
+        <a class="headerlink" href="#243" title="Permanent link">
+         ¶
+        </a>
+       </h4>
+       <p>
+        本メニューは、インターネット経由で本サービスに接続することができます。当社にてデータセンター側のインターネット回線を提供するため、お客さまにて準備いただく必要はございません。
+       </p>
+       <p>
+        <strong>
+         ◆インターネットコネクティビティ接続設定
+        </strong>
+       </p>
+       <table border="1" style="border-collapse: collapse" width="1000">
+        <tbody>
+         <tr>
+          <th>
+           項目
+          </th>
+          <th>
+           提供内容
+          </th>
+          <th>
+           注意事項
+          </th>
+         </tr>
+         <tr>
+          <td>
+           インターネットコネクティビティ接続設定
+          </td>
+          <td>
+           1VLAN単位
+          </td>
+          <td>
+           <ul>
+            <li>
+             本サービスでご利用中のVLANごとにお申し込みいただく必要があります。
+            </li>
+            <li>
+             お申し込みいただく場合には、接続対象のVLANを指定いただきます。
+             <sup>
+              *1
+             </sup>
+            </li>
+           </ul>
+          </td>
+         </tr>
+        </tbody>
+       </table>
+       <div class="admonition warning">
+        <p class="admonition-title">
+         Warning
+        </p>
+        <ul>
+         <li>
+          *1：同じVLANに対して「クラウド クロス コネクト接続設定」と「インターネットコネクティビティ接続設定」の両方を設定することはできません。
+         </li>
+         <li>
+          NSX_VLANに対して本オプションはご利用いただけません。
+         </li>
+        </ul>
+       </div>
+       <p>
+        <br/>
+       </p>
+       <p>
+        <strong>
+         【基本機能】
+        </strong>
+       </p>
+       <table border="1" style="border-collapse: collapse" width="1000">
+        <tbody>
+         <tr>
+          <th>
+           項目
+          </th>
+          <th>
+           内容
+          </th>
+          <th>
+           注意事項
+          </th>
+         </tr>
+         <tr>
+          <td>
+           インターネット接続回線帯域
+          </td>
+          <td>
+           最大1Gbps
+           <br/>
+           （1Gbps ベストエフォート）
+          </td>
+          <td>
+           IPv6 は提供しておりません。
+          </td>
+         </tr>
+         <tr>
+          <td>
+           グローバルIPアドレス
+          </td>
+          <td>
+           /27 or /28 or /29
+          </td>
+          <td>
+           グローバルIP アドレスの提供にあたって、ネットワークアドレス、ブロードキャストアドレス、デフォルトゲートウェイ用アドレスを差し引いた合計のアドレスをご利用いただけます。
+          </td>
+         </tr>
+         <tr>
+          <td>
+           冗長構成
+          </td>
+          <td>
+           Active-Active構成
+          </td>
+          <td>
+           ―
+          </td>
+         </tr>
+         <tr>
+          <td>
+           グローバルIPアドレス の持ち込み
+          </td>
+          <td>
+           不可
+          </td>
+          <td>
+           ―
+          </td>
+         </tr>
+        </tbody>
+       </table>
+       <p>
+        <br/>
+       </p>
+       <h3 id="25">
+        2.5 ライセンスオプション
+        <a class="headerlink" href="#25" title="Permanent link">
+         ¶
+        </a>
+       </h3>
+       <p>
+        <strong>
+         ◆メニュー
+        </strong>
+       </p>
+       <table border="1" style="border-collapse: collapse" width="1000">
+        <tbody>
+         <tr>
+          <th>
+           項目
+          </th>
+          <th>
+           内容
+          </th>
+         </tr>
+         <tr>
+          <td>
+           SQL Server（SPLA）
+          </td>
+          <td>
+           Microsoft SQL Serverのライセンスを提供します。
+          </td>
+         </tr>
+         <tr>
+          <td>
+           SQL Server モビリティ
+          </td>
+          <td>
+           お客さま保有のMicrosoft SQL Serverのライセンスを本サービスに持ち込んでご利用いただくことが可能です。
+          </td>
+         </tr>
+         <tr>
+          <td>
+           Remote Desktop Services（SAL）
+          </td>
+          <td>
+           Remote Desktop ServicesのSALライセンスを提供します。
+          </td>
+         </tr>
+         <tr>
+          <td>
+           FortiVM（ファイアウォール・UTM）
+           <sup>
+            *1
+           </sup>
+          </td>
+          <td>
+           Fortinet社のFortiVMおよびライセンスをご提供します。
+          </td>
+         </tr>
+         <tr>
+          <td>
+           FortiVM（ファイアウォール・UTM）_v2
+          </td>
+          <td>
+           Fortinet社のFortiVMおよびライセンスをご提供します。
+          </td>
+         </tr>
+        </tbody>
+       </table>
+       <div class="admonition warning">
+        <p class="admonition-title">
+         Warning
+        </p>
+        <ul>
+         <li>
+          *1：2025年3月17日を以って、新規販売を停止いたしました。
+         </li>
+        </ul>
+       </div>
+       <p>
+        <br/>
+       </p>
+       <h4 id="251-sql-serverspla">
+        2.5.1 SQL Server（SPLA）
+        <a class="headerlink" href="#251-sql-serverspla" title="Permanent link">
+         ¶
+        </a>
+       </h4>
+       <table border="1" style="border-collapse: collapse" width="1000">
+        <tbody>
+         <tr>
+          <th>
+           ライセンス
+          </th>
+          <th>
+           対応OS
+           <sup>
+            *1*2
+           </sup>
+          </th>
+          <th>
+           提供方式
+          </th>
+          <th>
+           提供単位
+          </th>
+          <th>
+           お客さまライセンス持ち込み可否
+          </th>
+         </tr>
+         <tr>
+          <td>
+           Microsoft SQL Server 2019 Standard（64bit）
+          </td>
+          <td>
+           Windows Server 2019
+          </td>
+          <td rowspan="2">
+           テンプレート方式
+          </td>
+          <td>
+           1vCPU単位
+          </td>
+          <td rowspan="2">
+           <a href="#252-sql-server">
+            SQL Serverモビリティ
+           </a>
+           を参照ください
+          </td>
+         </tr>
+         <tr>
+          <td>
+           Microsoft SQL Server 2022 Standard（64bit）
+          </td>
+          <td>
+           Windows Server 2022
+          </td>
+         </tr>
+        </tbody>
+       </table>
+       <div class="admonition warning">
+        <p class="admonition-title">
+         Warning
+        </p>
+        <ul>
+         <li>
+          *1：OSサポート終了などの理由で変更となる場合があります。
+         </li>
+         <li>
+          *2：詳細仕様は
+          <a href="https://cloud.nttsmc.com/doc/scp/scp_type-v_software_spec_resource-pool/">
+           OS・ミドルウェア設定一覧
+          </a>
+          を参照ください。
+         </li>
+         <li>
+          お申込み数量以上のVMを作成しないでください。作成された場合、作成された数量の料金を追加で請求させていただきます。作成後のVMスペック変更は可能ですが、VMスペックに応じたお申込みをお願いいたします。
+         </li>
+         <li>
+          Microsoft Cluster Serviceはご利用いただけません。
+         </li>
+         <li>
+          本オプションにて提供したライセンスおよびソフトウェアのアンインストールは禁止行為となります。
+         </li>
+         <li>
+          本オプションはMicrosoft SQL Serverのインストールメディアを要求される操作には対応しておりません。お客さまのご用意されたインストールメディアでの操作についても禁止行為となります。
+         </li>
+         <li>
+          Microsoft SQL Serverについて、提供後の設定/運用や、Service Packの適用等は全てお客さま責任にて実施となります。
+         </li>
+         <li>
+          バックアップに関しては、Microsoft SQL Server Management Studio等、Microsoft社から提供されるツール等での取得を推奨します。
+         </li>
+         <li>
+          その他、Microsoft社が定める規約（ライセンス規約等）にしたがって、ご利用願います。
+         </li>
+        </ul>
+       </div>
+       <p>
+        <br/>
+       </p>
+       <h4 id="252-sql-server">
+        2.5.2 SQL Serverモビリティ
+        <a class="headerlink" href="#252-sql-server" title="Permanent link">
+         ¶
+        </a>
+       </h4>
+       <p>
+        <a href="https://www.microsoft.com/ja-jp/licensing/software-assurance/license-mobility.aspx#tab=1">
+         ライセンスモビリティ
+        </a>
+        を利用して、お客さまのVMにMicrosoft SQL Serverを導入することができます。
+       </p>
+       <p>
+        本オプションでは、Microsoft SQL Serverのライセンス購入・管理やインストール・運用作業等は、全てお客さまで実施していただく必要がございます。
+       </p>
+       <p>
+        <br/>
+       </p>
+       <p>
+        <strong>
+         【対象製品】
+        </strong>
+        <br/>
+        Microsoft社が
+        <a href="https://www.microsoft.com/ja-jp/Licensing/product-licensing/products.aspx">
+         Webページ
+        </a>
+        （もしくは後継サイト）で掲載する製品条項で規定するMicrosoft SQL Serverのうち、以下の製品となります。
+       </p>
+       <ul>
+        <li>
+         Microsoft SQL Server 2019/2022 Enterprise Core、およびダウンエディションの権利によって規定されている製品（コアライセンスのみ）
+        </li>
+        <li>
+         Microsoft SQL Server 2019/2022 Standard Core、およびダウンエディションの権利によって規定されている製品（コアライセンスのみ）
+        </li>
+       </ul>
+       <div class="admonition warning">
+        <p class="admonition-title">
+         Warning
+        </p>
+        <ul>
+         <li>
+          ご利用にあたっては、当社が提供するOSのバージョンでご利用可能であるか、ご確認のうえご利用ください。
+         </li>
+         <li>
+          ご利用にあたっては、お客さまが所有するMicrosoft SQL Serverのライセンスが以下の条件を満たすことをご確認のうえご利用ください。
+          <ul>
+           <li>
+            VMのスペックに応じて必要とされる数のライセンスおよびソフトウェアアシュアランスをお客さまが保持していること
+           </li>
+           <li>
+            お客さまが保持するライセンスおよびソフトウェアアシュアランスがVMへのMicrosoft SQL Server導入後3ヵ月以上有効であること
+           </li>
+           <li>
+            VMでMicrosoft SQL Serverを利用する期間中は、必要とされる数のライセンスおよびソフトウェアアシュアランスをお客さまで維持すること
+           </li>
+           <li>
+            Microsoft SQL Serverを利用開始してから、90日以上は継続的にご利用いただくこと
+           </li>
+          </ul>
+         </li>
+        </ul>
+       </div>
+       <p>
+        <br/>
+       </p>
+       <p>
+        <strong>
+         【必要ライセンス数】
+        </strong>
+       </p>
+       <table border="1" style="border-collapse: collapse" width="1000">
+        <tbody>
+         <tr>
+          <th>
+           ｖCPU
+          </th>
+          <th>
+           必要ライセンス数
+          </th>
+         </tr>
+         <tr>
+          <td>
+           2 core以下
+          </td>
+          <td>
+           4コアライセンス
+          </td>
+         </tr>
+         <tr>
+          <td>
+           3 core以上
+          </td>
+          <td>
+           vCPU数分のコアライセンス
+          </td>
+         </tr>
+        </tbody>
+       </table>
+       <div class="admonition warning">
+        <p class="admonition-title">
+         Warning
+        </p>
+        <ul>
+         <li>
+          ライセンス数の計算方法等は、お客さま所有ライセンスの販売事業者もしくはマイクロソフトへお問い合わせください。
+         </li>
+        </ul>
+       </div>
+       <p>
+        <br/>
+       </p>
+       <h4 id="253-remote-desktop-servicessal">
+        2.5.3 Remote Desktop Services（SAL）
+        <a class="headerlink" href="#253-remote-desktop-servicessal" title="Permanent link">
+         ¶
+        </a>
+       </h4>
+       <p>
+        Remote Desktop ServicesのSALライセンスが登録されたライセンスサーバーを提供します。
+       </p>
+       <table border="1" style="border-collapse: collapse">
+        <tbody>
+         <tr>
+          <th width="10%">
+           項目
+          </th>
+          <th width="40%">
+           提供内容
+          </th>
+          <th width="50%">
+           備考
+          </th>
+         </tr>
+         <tr>
+          <td>
+           対応OS
+          </td>
+          <td>
+           Windows Server
+          </td>
+          <td>
+           －
+          </td>
+         </tr>
+         <tr>
+          <td>
+           ライセンス
+          </td>
+          <td>
+           【ライセンス名】Windows Remote Desktop Services
+           <br/>
+           <br/>
+           【ライセンス形態】SAL（Subscriber Access License）
+          </td>
+          <td>
+           <ul>
+            <li>
+             お客さまは、Windows Server Remote Desktop Services の機能またはその他のテクノロジを使用してグラフィカル ユーザー インターフェースをホストする目的で本サーバー ソフトウェアに直接または間接的にアクセスする権限を持つユーザーごとに、Windows Server Remote Desktop Services SAL を取得する必要があります。
+            </li>
+            <li>
+             Remote Desktop ServicesのSALの詳細については、Microsoft社から提供される
+             <a href="http://www.microsoftvolumelicensing.com/userights/DocumentSearch.aspx?Mode=3&amp;DocumentTypeId=2">
+              SPUR
+             </a>
+             をご覧ください。
+            </li>
+           </ul>
+          </td>
+         </tr>
+         <tr>
+          <td>
+           提供方式・単位
+          </td>
+          <td>
+           Remote Desktop ServicesのSALライセンスが登録されたライセンスサーバー（以下）をテンプレート方式で提供します。
+           <br/>
+           <ul>
+            <li>
+             Remote Desktop Services SAL 10ライセンス ＋ Windows Server 2019
+            </li>
+            <li>
+             Remote Desktop Services SAL 20ライセンス ＋ Windows Server 2019
+            </li>
+            <li>
+             Remote Desktop Services SAL 30ライセンス ＋ Windows Server 2019
+            </li>
+            <li>
+             Remote Desktop Services SAL 10ライセンス ＋ Windows Server 2022
+            </li>
+            <li>
+             Remote Desktop Services SAL 20ライセンス ＋ Windows Server 2022
+            </li>
+            <li>
+             Remote Desktop Services SAL 30ライセンス ＋ Windows Server 2022
+            </li>
+           </ul>
+          </td>
+          <td>
+           Remote Desktop Servicesをご利用になるエンドユーザー数分のライセンスが搭載されているテンプレートをご選択ください。
+          </td>
+         </tr>
+         <tr>
+          <td>
+           提供仕様
+          </td>
+          <td>
+           Windows Serverに以下の設定を追加して提供します。
+           <br/>
+           <br/>
+           【役割】
+           <br/>
+           リモート デスクトップ サービス
+           <br/>
+           -リモート デスクトップ ライセンス
+           <br/>
+           <br/>
+           【機能】
+           <br/>
+           リモート デスクトップ ライセンス ツール
+           <br/>
+           <br/>
+           【設定内容】
+           <ul>
+            <li>
+             RDライセンスマネージャにて、ライセンスサーバーとしてアクティブ化
+            </li>
+            <li>
+             お申し込みいただいた数量の「RDS CAL（接続ユーザー数）」の ライセンスを登録
+            </li>
+            <li>
+             会社についての情報欄に運用管理責任者の情報を登録
+            </li>
+           </ul>
+          </td>
+          <td>
+           セッションホストサーバー等の設定はお客さまにて実施いただきます。
+           <br/>
+           ※セッションホストサーバーでは、 ライセンスモードを「接続ユーザー数」、ライセンスサーバーとして「Remote Desktop Services（SAL）を申し込んだVM」をご指定ください。
+          </td>
+         </tr>
+        </tbody>
+       </table>
+       <h5 id="2531">
+        2.5.3.1 注意事項
+        <a class="headerlink" href="#2531" title="Permanent link">
+         ¶
+        </a>
+       </h5>
+       <ul>
+        <li>
+         セッションホストサーバーはお客さまにて構築ください。
+        </li>
+        <li>
+         ライセンスサーバーに登録されているライセンス数量を変更することはできません。
+        </li>
+        <li>
+         本オプションを解約する場合、ライセンスサーバーをお客さまにて削除
+         <sup>
+          *1
+         </sup>
+         する必要があります。
+        </li>
+        <li>
+         新規お申し込み後に、ライセンス数量を増やしたい場合は、以下の2パターンのいずれかでお申し込みをお願いします。
+         <ul>
+          <li>
+           追加で必要なライセンスサーバーをお申込みください。
+          </li>
+          <li>
+           既存のライセンスサーバーを解約
+           <sup>
+            *1
+           </sup>
+           し、新規で必要なライセンスサーバーをお申し込みください。
+          </li>
+         </ul>
+        </li>
+        <li>
+         新規お申し込み後に、ライセンス数量を減らしたい場合は、以下のお申し込みをお願いします。
+         <ul>
+          <li>
+           既存のライセンスサーバーを解約
+           <sup>
+            *1
+           </sup>
+           し、新規で必要なライセンスサーバーをお申し込みください。
+          </li>
+         </ul>
+        </li>
+        <li>
+         ライセンス数が不足しないよう、余裕を持った数量をお申し込みください。
+        </li>
+        <li>
+         ライセンスサーバーに対して、当社が予め実施した設定の変更やライセンスの削除・ライセンスサーバーの非アクティブ化の作業等は禁止させていただきます。
+        </li>
+        <li>
+         ライセンスサーバーに対して、当社が提供するライセンス以外のライセンスを登録することは禁止させていただきます。
+        </li>
+        <li>
+         提供後の設定/運用はすべてお客さま責任となりますので、ご了承ください。
+        </li>
+        <li>
+         その他、Microsoft社が定める規約（ライセンス規約等）にしたがって、ご利用願います。
+        </li>
+       </ul>
+       <div class="admonition warning">
+        <p class="admonition-title">
+         Warning
+        </p>
+        <ul>
+         <li>
+          *1：既存のライセンスサーバーにセッションホストサーバーも構築している場合は、既存のライセンスサーバー解約時に、セッションホストサーバーも削除されます。ご注意ください。
+         </li>
+        </ul>
+       </div>
+       <p>
+        <br/>
+       </p>
+       <h4 id="254-fortivmutm">
+        2.5.4 FortiVM（ファイアウォール・UTM）
+        <a class="headerlink" href="#254-fortivmutm" title="Permanent link">
+         ¶
+        </a>
+       </h4>
+       <p>
+        フォーティネットジャパン株式会社（以下、「Fortinet社」）が提供するFW/UTM仮想アプライアンスである FortiVM のライセンスを提供します。
+       </p>
+       <p>
+        <br/>
+       </p>
+       <h5 id="2541">
+        2.5.4.1 提供ライセンス
+        <a class="headerlink" href="#2541" title="Permanent link">
+         ¶
+        </a>
+       </h5>
+       <table>
+        <tbody>
+         <tr>
+          <th colspan="2">
+           FortiVMライセンス品目
+          </th>
+          <th>
+           提供単位
+          </th>
+          <th>
+           提供方式
+          </th>
+         </tr>
+         <tr>
+          <td>
+           ファイアウォール
+           <sup>
+            *1
+           </sup>
+          </td>
+          <td>
+           VM01V
+          </td>
+          <td rowspan="4">
+           仮想マシン毎に1ライセンス
+          </td>
+          <td rowspan="4">
+           テンプレート方式
+          </td>
+         </tr>
+         <tr>
+          <td>
+           UTM
+           <sup>
+            *1
+           </sup>
+          </td>
+          <td>
+           VM02V
+          </td>
+         </tr>
+         <tr>
+          <td>
+           ファイアウォール_v2
+          </td>
+          <td>
+           VM01S
+          </td>
+         </tr>
+         <tr>
+          <td>
+           UTM_v2
+          </td>
+          <td>
+           VM02S
+          </td>
+         </tr>
+        </tbody>
+       </table>
+       <p>
+        <br/>
+       </p>
+       <div class="admonition warning">
+        <p class="admonition-title">
+         Warning
+        </p>
+        <ul>
+         <li>
+          *1：2025年3月17日を以って、新規販売を停止いたしました。
+         </li>
+         <li>
+          FortiVM の詳細仕様については、Fortinet社ドキュメントをご確認ください。
+         </li>
+         <li>
+          各ライセンスのスペックについては、
+          <a href="https://www.fortinet.com/content/dam/fortinet/assets/data-sheets/fortigate-vm.pdf">
+           FortiGate 仮想アプライアンス Data Sheet
+          </a>
+          の「技術仕様」をご確認ください。特に割り当て可能な仮想CPUコア数はライセンスによって最大/最小値が規定されております。ご注意ください。
+         </li>
+         <li>
+          提供バージョンについては「
+          <a href="https://cloud.nttsmc.com/doc/scp/software_lifecycle/#71-fortios">
+           各種ソフトウェアサポート情報
+          </a>
+          」をご確認ください。
+         </li>
+         <li>
+          お申込み数量以上のVMを作成しないでください。作成された場合、作成された数量の料金を追加で請求させていただきます。
+         </li>
+         <li>
+          FortiVM の利用には、インターネット経由でのライセンス認証が必要です。ライセンス認証用の経路はお客さまにて確保頂く必要があります。
+         </li>
+         <li>
+          本オプションで提供するライセンスについては、本サービス以外での利用を禁止します。
+         </li>
+        </ul>
+       </div>
+       <p>
+        <br/>
+       </p>
+       <h5 id="2542">
+        2.5.4.2 利用手順
+        <a class="headerlink" href="#2542" title="Permanent link">
+         ¶
+        </a>
+       </h5>
+       <ol>
+        <li>
+         必要なFortiVMのライセンス数を確認の上、本オプションを申し込み
+        </li>
+        <li>
+         当社から申込確認書とライセンスファイルを送付
+        </li>
+        <li>
+         お客さまにて仮想マシン（FortiVM）のデプロイおよび、設定、ライセンス認証を実施
+        </li>
+       </ol>
+       <div class="admonition warning">
+        <p class="admonition-title">
+         Warning
+        </p>
+        <ul>
+         <li>
+          お客さま作業の詳細については
+          <a href="https://cloud.nttsmc.com/doc/scp/scp_fortigate_mnl/">
+           FortiVM操作マニュアル
+          </a>
+          を参照ください。
+         </li>
+        </ul>
+       </div>
+       <h3 id="26">
+        2.6 マネジメントオプション
+        <a class="headerlink" href="#26" title="Permanent link">
+         ¶
+        </a>
+       </h3>
+       <p>
+        <strong>
+         ◆メニュー
+        </strong>
+       </p>
+       <table border="1" style="border-collapse: collapse" width="1000">
+        <tbody>
+         <tr>
+          <th>
+           項目
+          </th>
+          <th>
+           内容
+          </th>
+         </tr>
+         <tr>
+          <td>
+           ドメイン
+          </td>
+          <td rowspan="2">
+           「
+           <a href="https://cloud.nttsmc.com/doc/option_spec.pdf">
+            SmartConnect Cloud Service（ドメイン名関連、DNS運用代行、SSLサーバー証明書オプション）サービス仕様書
+           </a>
+           」をご参照ください。
+          </td>
+         </tr>
+         <tr>
+          <td>
+           SSL証明書
+          </td>
+         </tr>
+         <tr>
+          <td>
+           ポータルサイト（VCD）アカウント追加
+          </td>
+          <td>
+           標準提供の1アカウントに加え、最大30アカウントまで1アカウント単位での追加が可能です（ポータルサイト用のアカウントになります）。
+          </td>
+         </tr>
+        </tbody>
+       </table>
+       <p>
+        <br/>
+       </p>
+       <h4 id="261-vcd">
+        2.6.1 ポータルサイト（VCD）アカウント追加/削除
+        <a class="headerlink" href="#261-vcd" title="Permanent link">
+         ¶
+        </a>
+       </h4>
+       <p>
+        ポータルサイトのアカウントを追加/削除するオプションです。
+       </p>
+       <table border="1" style="border-collapse: collapse" width="1000">
+        <tbody>
+         <tr>
+          <th>
+           項目
+          </th>
+          <th>
+           提供内容
+          </th>
+         </tr>
+         <tr>
+          <td>
+           アカウント追加
+          </td>
+          <td>
+           標準提供の1アカウントを含め、最大30アカウントまで追加が可能です。
+          </td>
+         </tr>
+         <tr>
+          <td>
+           アカウント削除
+          </td>
+          <td>
+           ・追加アカウントの削除が可能です。
+           <br/>
+           ・最低1アカウントの利用が必要です。
+          </td>
+         </tr>
+        </tbody>
+       </table>
+       <p>
+        <br/>
+       </p>
+       <h3 id="27">
+        2.7 サービス品質
+        <a class="headerlink" href="#27" title="Permanent link">
+         ¶
+        </a>
+       </h3>
+       <p>
+        本サービスで実現するサービス品質は、以下となります。
+       </p>
+       <h4 id="271">
+        2.7.1 可用性
+        <a class="headerlink" href="#271" title="Permanent link">
+         ¶
+        </a>
+       </h4>
+       <table border="1" style="border-collapse: collapse" width="1000">
+        <tbody>
+         <tr>
+          <th>
+           項目
+          </th>
+          <th>
+           実現品質レベル
+          </th>
+          <th>
+           備考
+          </th>
+         </tr>
+         <tr>
+          <td>
+           ハードウェア　および ネットワーク　構成
+          </td>
+          <td>
+           本サービスを提供するための設備等について、二重化等による冗長構成を実現しております。
+           <br/>
+           <ul>
+            <li>
+             本サービス提供範囲内のネットワーク装置について、ハードウェアレベルでの冗長化を提供
+            </li>
+            <li>
+             ストレージについてはRAID構成により冗長化し耐障害性の向上を実現
+            </li>
+           </ul>
+          </td>
+          <td>
+          </td>
+         </tr>
+         <tr>
+          <td>
+           VM
+          </td>
+          <td>
+           お客さまがご利用のVMについて、VMwareのHigh Availability（以下、HA）機能を利用した高可用性構成を標準で提供します。
+           <br/>
+           お客さまがご利用中のVMを収容しているサーバー設備に故障が発生した場合に、冗長化している物理サーバー上で当社が自動的にVMの再起動を実施します。
+          </td>
+          <td>
+           当社の設備のメンテナンス等に伴うvMotion、Storage vMotionを予告なく実施する場合があります。
+           <br/>
+           作業の実施中、ポータルサイト上で一部操作ができない場合があります。
+           <br/>
+           その場合、時間をおいてから再度操作を実施して下さい。
+          </td>
+         </tr>
+         <tr>
+          <td>
+           サービス運用
+          </td>
+          <td>
+           当社は、事業継続マネジメントシステム（BCMS）規格「ISO22301：2019」の認証を取得しており、災害、伝染病、事故等の様々な インシデントが発生した際にも、事業を中断することなく継続させるための仕組みづくりや教育・訓練に取組んでおります。
+           <br/>
+           <br/>
+           <a href="https://www.nttsmc.com/company/certifications.html">
+            https://www.nttsmc.com/company/certifications.html
+           </a>
+          </td>
+         </tr>
+        </tbody>
+       </table>
+       <h4 id="272">
+        2.7.2 本サービスの物理専有範囲について
+        <a class="headerlink" href="#272" title="Permanent link">
+         ¶
+        </a>
+       </h4>
+       <p>
+        本サービスは、物理基盤を共用しております。他のお客さまの利用状況により、性能に影響が出る可能性があります。
+       </p>
+       <p>
+        <br/>
+       </p>
+       <h5 id="2721-ha">
+        2.7.2.1 HA機能
+        <a class="headerlink" href="#2721-ha" title="Permanent link">
+         ¶
+        </a>
+       </h5>
+       <p>
+        お客さまがご利用中のVMを収容しているサーバー設備に故障が発生した場合に、冗長化している物理サーバー上で当社が自動的にVMの再起動を実施します。
+        <br/>
+        VMの停止・再起動を伴うため、VMの停止から再起動までの間はVMの利用はできません。また、VMのOSの強制停止となりますので、故障発生時のOSの状態は保持されませんので、ご注意ください。
+       </p>
+       <p>
+        <br/>
+       </p>
+       <h5 id="2722">
+        2.7.2.2 別筐体バックアップ機能
+        <a class="headerlink" href="#2722" title="Permanent link">
+         ¶
+        </a>
+       </h5>
+       <p>
+        当社運用上、お客さまデータストア領域のバックアップを作成します。バックアップは当社管理のデータストア領域に保存されます。お客さまによる本バックアップからのリストア操作はできません。
+       </p>
+       <table border="1" style="border-collapse: collapse" width="1000">
+        <tbody>
+         <tr>
+          <th>
+           項目
+          </th>
+          <th>
+           提供内容
+          </th>
+         </tr>
+         <tr>
+          <td>
+           取得対象
+          </td>
+          <td>
+           お客さまデータストア領域
+          </td>
+         </tr>
+         <tr>
+          <td>
+           取得タイミング
+          </td>
+          <td>
+           1日1回
+          </td>
+         </tr>
+         <tr>
+          <td>
+           作業実施者
+          </td>
+          <td>
+           当社
+          </td>
+         </tr>
+         <tr>
+          <td>
+           取得方法
+          </td>
+          <td>
+           当社システムによる自動取得
+          </td>
+         </tr>
+         <tr>
+          <td>
+           世代管理数
+          </td>
+          <td>
+           最大3世代
+          </td>
+         </tr>
+        </tbody>
+       </table>
+       <p>
+        <br/>
+       </p>
+       <h4 id="273">
+        2.7.3 セキュリティ対策
+        <a class="headerlink" href="#273" title="Permanent link">
+         ¶
+        </a>
+       </h4>
+       <p>
+        当社では、お客さまにサービスを安全にご利用頂くために必要なセキュリティ対策や、各種認証取得を実施しております。
+       </p>
+       <table border="1" style="border-collapse: collapse" width="1000">
+        <tbody>
+         <tr>
+          <th>
+           項目
+          </th>
+          <th>
+           提供内容
+          </th>
+         </tr>
+         <tr>
+          <td>
+           ポータルサイトアクセスへの不正アクセス防止
+          </td>
+          <td>
+           <ul>
+            <li>
+             WAF/SIEM等のセキュリティ装置の導入
+            </li>
+            <li>
+             二要素認証の導入
+            </li>
+           </ul>
+          </td>
+         </tr>
+         <tr>
+          <td>
+           ネットワーク
+          </td>
+          <td>
+           <ul>
+            <li>
+             お客さまごとに論理的に独立したネットワークの提供
+            </li>
+            <li>
+             ご契約終了後のネットワーク設定の削除
+            </li>
+           </ul>
+          </td>
+         </tr>
+         <tr>
+          <td>
+           サービス運用
+          </td>
+          <td>
+           <ul>
+            <li>
+             ISMS クラウドセキュリティJISQ27001:2014（ISO/IEC 27017:2016）の認証を取得
+            </li>
+            <li>
+             ISMS適合性評価制度 JISQ27001:2006（ISO/IEC 27001:2005）の認証を取得
+            </li>
+            <li>
+             一般財団法人日本情報経済社会推進協会（JIPDEC）より『プライバシーマーク』を取得
+             <br/>
+             <a href="http://www.nttsmc.com/company/isms.html">
+              http://www.nttsmc.com/company/isms.html
+             </a>
+            </li>
+           </ul>
+          </td>
+         </tr>
+        </tbody>
+       </table>
+       <div class="admonition warning">
+        <p class="admonition-title">
+         Warning
+        </p>
+        <ul>
+         <li>
+          仮想基盤をお客さまに提供した後のVMやOS等に関するセキュリティ脆弱性対応に関しては、お客さま責任による実施となります。
+         </li>
+        </ul>
+       </div>
+       <p>
+        <br/>
+       </p>
+       <h4 id="274-slaservice-level-agreement">
+        2.7.4 サービス品質保証制度（SLA：Service Level Agreement）
+        <a class="headerlink" href="#274-slaservice-level-agreement" title="Permanent link">
+         ¶
+        </a>
+       </h4>
+       <table border="1" style="border-collapse: collapse" width="1000">
+        <tbody>
+         <tr>
+          <td>
+           項目
+          </td>
+          <td>
+           水準
+          </td>
+          <td>
+           備考
+          </td>
+         </tr>
+         <tr>
+          <td>
+           基本サーバー稼働率
+          </td>
+          <td>
+           99.95%/月以上
+          </td>
+          <td>
+           詳細につきましては「
+           <a href="https://cloud.nttsmc.com/doc/scp_type-v_sla_resource-pool.pdf">
+            SmartConnect Cloud Platform（Type-V）SLA（Service Level Agreement）利用規約
+           </a>
+           」をご覧ください。
+          </td>
+         </tr>
+        </tbody>
+       </table>
+       <p>
+        <br/>
+       </p>
+       <h3 id="28">
+        2.8 責任分界点
+        <a class="headerlink" href="#28" title="Permanent link">
+         ¶
+        </a>
+       </h3>
+       <h4 id="281">
+        2.8.1 物理構成観点
+        <a class="headerlink" href="#281" title="Permanent link">
+         ¶
+        </a>
+       </h4>
+       <p>
+        設備構成上の本サービスにおける当社責任分界点は以下の通りです。
+       </p>
+       <p>
+        <img alt="物理構成_リソプ_r2.PNG" src="img/66c305de94ef259058d05e64"/>
+       </p>
+       <p>
+        <br/>
+       </p>
+       <h4 id="282">
+        2.8.2 論理構成観点
+        <a class="headerlink" href="#282" title="Permanent link">
+         ¶
+        </a>
+       </h4>
+       <p>
+        論理構成上の本サービスにおける当社責任分界点は以下の通りです。
+       </p>
+       <p>
+        <img alt="論理構成_リソプ_r2.PNG" src="img/66c4094e94ef259058d2075c"/>
+       </p>
+       <div class="admonition warning">
+        <p class="admonition-title">
+         Warning
+        </p>
+        <ul>
+         <li>
+          開通後、お客さま設定により、通信不通/性能低下/不正攻撃等が発生した場合は、お客さま責任となります。
+         </li>
+         <li>
+          開通後、お客さまが著しくリソースを専有する等、その利用状況がサービス運用に影響を与えると当社が判断した場合、サービスの利用制限等の対処を行う場合があります。
+         </li>
+        </ul>
+       </div>
+       <p>
+        <br/>
+       </p>
+       <h2 id="3">
+        3. お申し込み（新規・変更・解約）
+        <a class="headerlink" href="#3" title="Permanent link">
+         ¶
+        </a>
+       </h2>
+       <h3 id="31">
+        3.1 サービス開始までの期間
+        <a class="headerlink" href="#31" title="Permanent link">
+         ¶
+        </a>
+       </h3>
+       <p>
+        本サービスとオプションサービスの提供期間は以下のとおりとなります。営業日について、お客さまが契約者パネルから申請をいただき、当社営業担当が承認した日を0営業日として起算いたします。
+       </p>
+       <table border="1" style="border-collapse: collapse" width="1000">
+        <tbody>
+         <tr>
+          <th colspan="3" rowspan="2">
+           サービス
+          </th>
+          <th colspan="3">
+           提供・変更・解約完了までの期間
+           <sub>
+            *1
+           </sub>
+          </th>
+         </tr>
+         <tr>
+          <th>
+           新規
+           <sub>
+            *2*3
+           </sub>
+          </th>
+          <th>
+           変更
+           <sub>
+            *3*4
+           </sub>
+          </th>
+          <th>
+           解約
+           <sub>
+            *5
+           </sub>
+          </th>
+         </tr>
+         <tr>
+          <td colspan="3">
+           基本リソース
+          </td>
+          <td>
+           2営業日
+          </td>
+          <td>
+           2営業日
+          </td>
+          <td>
+           2営業日
+          </td>
+         </tr>
+         <tr>
+          <td colspan="6">
+           ネットワークオプション
+          </td>
+         </tr>
+         <tr>
+          <td rowspan="3">
+          </td>
+          <td colspan="2">
+           VLAN追加
+          </td>
+          <td>
+           3営業日
+          </td>
+          <td>
+           ―
+          </td>
+          <td>
+           3営業日
+          </td>
+         </tr>
+         <tr>
+          <td rowspan="2">
+           外部接続オプション
+          </td>
+          <td>
+           クラウド クロス コネクト接続設定
+          </td>
+          <td>
+           7営業日
+          </td>
+          <td>
+           7営業日
+          </td>
+          <td>
+           7営業日
+          </td>
+         </tr>
+         <tr>
+          <td>
+           インターネットコネクティビティ接続設定
+          </td>
+          <td>
+           7営業日
+          </td>
+          <td>
+           7営業日
+          </td>
+          <td>
+           7営業日
+          </td>
+         </tr>
+         <tr>
+          <td colspan="6">
+           ライセンスオプション
+          </td>
+         </tr>
+         <tr>
+          <td rowspan="5">
+          </td>
+          <td colspan="2">
+           SQL　Server（SPLA）
+          </td>
+          <td>
+           2営業日
+          </td>
+          <td>
+           ―
+          </td>
+          <td>
+           ―
+          </td>
+         </tr>
+         <tr>
+          <td colspan="2">
+           SQL　Server モビリティ
+          </td>
+          <td colspan="3">
+           マイクロソフト社より提供
+          </td>
+         </tr>
+         <tr>
+          <td colspan="2">
+           Remote　Desktop Services（SAL）
+          </td>
+          <td>
+           2営業日
+          </td>
+          <td>
+           ―
+          </td>
+          <td>
+           ―
+          </td>
+         </tr>
+         <tr>
+          <td colspan="2">
+           FortiVM（ファイアウォール・UTM）
+           <sub>
+            *6
+           </sub>
+          </td>
+          <td>
+           7営業日
+          </td>
+          <td>
+           ―
+          </td>
+          <td>
+           10営業日
+          </td>
+         </tr>
+         <tr>
+          <td colspan="2">
+           FortiVM（ファイアウォール・UTM）_v2
+          </td>
+          <td>
+           7営業日
+          </td>
+          <td>
+           ―
+          </td>
+          <td>
+           10営業日
+          </td>
+         </tr>
+         <tr>
+          <td colspan="6">
+           マネジメントオプション
+          </td>
+         </tr>
+         <tr>
+          <td rowspan="3">
+          </td>
+          <td colspan="2">
+           ドメイン
+          </td>
+          <td>
+           10営業日
+          </td>
+          <td>
+           10営業日
+          </td>
+          <td>
+           15営業日
+          </td>
+         </tr>
+         <tr>
+          <td colspan="2">
+           SSL証明書
+          </td>
+          <td>
+           10営業日
+          </td>
+          <td>
+           10営業日
+          </td>
+          <td>
+           ―
+          </td>
+         </tr>
+         <tr>
+          <td colspan="2">
+           ポータルサイト（VCD）アカウント追加
+          </td>
+          <td>
+           3営業日
+          </td>
+          <td>
+           ―
+          </td>
+          <td>
+           3営業日
+          </td>
+         </tr>
+         <tr>
+          <td colspan="3">
+           ご契約情報変更（ご契約情報）
+          </td>
+          <td>
+           ―
+          </td>
+          <td>
+           5営業日
+          </td>
+          <td>
+           ―
+          </td>
+         </tr>
+        </tbody>
+       </table>
+       <div class="admonition warning">
+        <p class="admonition-title">
+         Warning
+        </p>
+        <ul>
+         <li>
+          *1：お申し込み受付および提供開始日は、当社営業日のみとなります。また、設備の都合上、提供開始日をご相談させていただく場合がございます。
+         </li>
+         <li>
+          *2：お客さまの申し込み状況により、提供開始日時をご相談させていただく場合がございます。
+         </li>
+         <li>
+          *3：作業については、当社営業日のうち以下の時間帯のみの対応となります。
+          <ul>
+           <li>
+            AM ：10:00～12:00
+           </li>
+           <li>
+            PM1：13:00～15:00
+           </li>
+           <li>
+            PM2：15:00～17:00
+           </li>
+          </ul>
+         </li>
+         <li>
+          *4：削減（削除）対象のリソースが使用中である場合、ご希望日に作業ができない場合がございます。お申込み前に、削減（削除）対象のリソースが未使用であることを確認してください。
+         </li>
+         <li>
+          *5：複数のサービスを同時解約する場合には、最も長い解約期間が適用されます。あるサービスの解約申し込み期間中（解約申し込み受領後～解約日までの期間）には他サービスの解約申し込みはできません。複数のサービスを解約する際には、同時にお申し込みください。基本サーバー・ネットワーク接続をすべて解約される場合には、オプションもすべて解約となります。
+         </li>
+         <li>
+          *6：2025年3月17日を以って、新規販売を停止いたしました。
+         </li>
+        </ul>
+       </div>
+       <p>
+        <br/>
+       </p>
+       <p>
+        <strong>
+         【新規お申し込み】
+        </strong>
+       </p>
+       <ul>
+        <li>
+         クラウドサービス申込書（契約者パネル申込書）
+        </li>
+        <li>
+         契約者パネルによる申し込み（WEB）
+        </li>
+        <li>
+         クラウドサービス申込書（契約者情報）
+        </li>
+        <li>
+         IPアドレス割当申請書（ネットワークオプションの外部接続オプション（インターネットコネクティビティ接続設定）をお申し込みの場合）
+        </li>
+        <li>
+         マネジメントオプションにおける各種申込書類（マネジメントオプションをお申し込みの場合）
+        </li>
+       </ul>
+       <p>
+        <br/>
+       </p>
+       <p>
+        <strong>
+         【変更お申し込み】
+        </strong>
+       </p>
+       <ul>
+        <li>
+         契約者パネルによる申し込み（WEB）
+        </li>
+        <li>
+         IPアドレス割当申請書（ネットワークオプションの外部接続オプション（インターネットコネクティビティ接続設定）をお申し込みの場合）
+        </li>
+        <li>
+         マネジメントオプションにおける各種申込書類（マネジメントオプションをお申し込みの場合）
+        </li>
+       </ul>
+       <p>
+        <br/>
+       </p>
+       <p>
+        <strong>
+         【解約お申し込み】
+        </strong>
+       </p>
+       <ul>
+        <li>
+         契約者パネルによる申し込み（WEB）
+        </li>
+        <li>
+         IPアドレス割当申請書（ネットワークオプションの外部接続オプション（インターネットコネクティビティ接続設定）をお申し込みの場合）
+        </li>
+        <li>
+         マネジメントオプションにおける各種申込書類（マネジメントオプションをお申し込みの場合）
+        </li>
+       </ul>
+       <p>
+        <br/>
+       </p>
+       <div class="admonition warning">
+        <p class="admonition-title">
+         Warning
+        </p>
+        <ul>
+         <li>
+          当社営業より、お客さまとの工事日時の調整や、お見積りを実施する場合がございます。
+         </li>
+        </ul>
+       </div>
+       <p>
+        <br/>
+       </p>
+       <h3 id="32">
+        3.2 サービス開始までの流れ（新規・追加・変更）
+        <a class="headerlink" href="#32" title="Permanent link">
+         ¶
+        </a>
+       </h3>
+       <p>
+        サービス開始までの流れは以下のとおりとなります。
+       </p>
+       <p>
+        <img alt="image.png" src="img/62cf172994ef259058209ef9"/>
+       </p>
+       <div class="admonition warning">
+        <p class="admonition-title">
+         Warning
+        </p>
+        <ul>
+         <li>
+          追加/変更時において、工事日時や見積もり調整のため、当社営業担当よりご連絡する場合がございます。
+         </li>
+        </ul>
+       </div>
+       <p>
+        <br/>
+       </p>
+       <h3 id="33">
+        3.3 送付資料
+        <a class="headerlink" href="#33" title="Permanent link">
+         ¶
+        </a>
+       </h3>
+       <p>
+        サービス開通時に、以下の資料をご送付します。
+       </p>
+       <ul>
+        <li>
+         SmartConnect Cloud Platform（Type-V）サービス開通通知書
+        </li>
+       </ul>
+       <p>
+        <br/>
+       </p>
+       <h2 id="4">
+        4. サポート／お問い合わせ
+        <a class="headerlink" href="#4" title="Permanent link">
+         ¶
+        </a>
+       </h2>
+       <h3 id="41">
+        4.1 ご契約前のお問い合わせ窓口
+        <a class="headerlink" href="#41" title="Permanent link">
+         ¶
+        </a>
+       </h3>
+       <p>
+        本サービス全般についてのお問い合わせは、当社営業担当への問い合わせ、または以下のフォームをご利用願います。
+       </p>
+       <table border="1" style="border-collapse: collapse" width="1000">
+        <tbody>
+         <tr>
+          <td>
+           お問い合わせ
+          </td>
+          <td>
+           <a href="https://inquire.nttsmc.com/default/scp">
+            https://inquire.nttsmc.com/default/scp
+           </a>
+          </td>
+         </tr>
+        </tbody>
+       </table>
+       <h3 id="42">
+        4.2 ご契約者さま向けお問い合わせ窓口
+        <a class="headerlink" href="#42" title="Permanent link">
+         ¶
+        </a>
+       </h3>
+       <p>
+        ご契約者さまからのお問い合わせにつきましては、お申し込み時にお客さまにご指定いただいた運用管理責任者さまもしくは運用管理担当者さまからのみ受付いたします。
+        <br/>
+        お申し込み時に個人ではなく組織でご登録いただいた場合には、ご本人認証のために、事前に登録いただいた電話番号にコールバックを実施いたします。なお、運用管理責任者は必須で1名登録が必要となります。また運用管理担当者は最大4名（組織登録含む）まで登録可能です。
+        <br/>
+        ご登録いただいた情報が変更等になった場合には、変更申込書をご送付ください。
+       </p>
+       <h4 id="421">
+        4.2.1 ご契約内容、請求に関するお問い合わせ
+        <a class="headerlink" href="#421" title="Permanent link">
+         ¶
+        </a>
+       </h4>
+       <table border="1" style="border-collapse: collapse" width="1000">
+        <tbody>
+         <tr>
+          <th>
+           受付方法
+          </th>
+          <td>
+           メールによる受付
+          </td>
+          <td>
+           電話窓口による受付
+          </td>
+         </tr>
+         <tr>
+          <th>
+           受付時間
+          </th>
+          <td>
+           24時間365日
+           <br/>
+           ただし、当社からの回答につきましては、当社営業日でのご回答となります。
+          </td>
+          <td>
+           当社営業日の10:00～12:00、13:00～17:00
+          </td>
+         </tr>
+         <tr>
+          <th>
+           お問い合わせ先
+          </th>
+          <td colspan="2">
+           メールアドレス、電話番号は、
+           <a href="http://cloud.nttsmc.com/doc/scp/">
+            サポートサイト
+           </a>
+           の「お問い合わせ」欄に記載しています。
+          </td>
+         </tr>
+        </tbody>
+       </table>
+       <h4 id="422">
+        4.2.2 サービスの利用方法や技術的なお問い合わせ
+        <a class="headerlink" href="#422" title="Permanent link">
+         ¶
+        </a>
+       </h4>
+       <table border="1" style="border-collapse: collapse" width="1000">
+        <tbody>
+         <tr>
+          <th>
+           受付方法
+          </th>
+          <td>
+           メールによる受付
+          </td>
+          <td>
+           電話窓口による受付
+          </td>
+         </tr>
+         <tr>
+          <th>
+           受付時間
+          </th>
+          <td>
+           24時間365日
+           <br/>
+           ただし、当社からの回答につきましては、当社営業日でのご回答となります。
+          </td>
+          <td>
+           当社営業日の10:00～12:00、13:00～17:00
+          </td>
+         </tr>
+         <tr>
+          <th>
+           お問い合わせ先
+          </th>
+          <td colspan="2">
+           メールアドレス、電話番号は、
+           <a href="http://cloud.nttsmc.com/doc/scp/">
+            サポートサイト
+           </a>
+           の「お問い合わせ」欄に記載しています。
+          </td>
+         </tr>
+        </tbody>
+       </table>
+       <h4 id="423">
+        4.2.3 緊急時・故障時のお問い合わせ
+        <a class="headerlink" href="#423" title="Permanent link">
+         ¶
+        </a>
+       </h4>
+       <table border="1" style="border-collapse: collapse" width="1000">
+        <tbody>
+         <tr>
+          <th>
+           受付方法
+          </th>
+          <td>
+           メール、電話窓口による受付
+          </td>
+         </tr>
+         <tr>
+          <th>
+           受付時間
+          </th>
+          <td>
+           24時間365日
+          </td>
+         </tr>
+         <tr>
+          <th>
+           お問い合わせ先
+          </th>
+          <td>
+           メールアドレス、電話番号は、
+           <a href="http://cloud.nttsmc.com/doc/scp/">
+            サポートサイト
+           </a>
+           の「お問い合わせ」欄に記載しています。
+          </td>
+         </tr>
+        </tbody>
+       </table>
+       <h3 id="43">
+        4.3 当社からのご連絡
+        <a class="headerlink" href="#43" title="Permanent link">
+         ¶
+        </a>
+       </h3>
+       <h4 id="431">
+        4.3.1 定期メンテナンス
+        <a class="headerlink" href="#431" title="Permanent link">
+         ¶
+        </a>
+       </h4>
+       <ul>
+        <li>
+         原則、毎月第2木曜日 0:30～5:30の時間帯で最大5時間の定期メンテナンスを実施させていただきます。
+         <ul>
+          <li>
+           メンテナンス中はポータル機能がご利用いただけません。
+          </li>
+          <li>
+           お客さまのＶＭはメンテナンス中も引き続きご利用いただけます。
+          </li>
+         </ul>
+        </li>
+        <li>
+         管理サーバーにおいて定期メンテナンス以外のメンテナンスを実施する場合には、原則計画工事の実施の2週間前までに、工事の日時、サービス影響範囲について、メールまたは当社サイト等にて通知いたします。
+        </li>
+       </ul>
+       <h4 id="432">
+        4.3.2 計画工事
+        <a class="headerlink" href="#432" title="Permanent link">
+         ¶
+        </a>
+       </h4>
+       <ul>
+        <li>
+         サービスの品質維持・向上、および機器の拡張・保守・保全を目的とした計画工事を実施する場合がございます。
+        </li>
+        <li>
+         お客さまのサービス利用に影響がない場合、お客さまへの通知はいたしません。
+        </li>
+        <li>
+         お客さまのサービス利用に影響がある場合、計画工事の実施の2週間前までに、工事の日時、サービス影響範囲について、メールまたは当社サイト等にて通知いたします。
+        </li>
+       </ul>
+       <h4 id="433">
+        4.3.3 緊急工事
+        <a class="headerlink" href="#433" title="Permanent link">
+         ¶
+        </a>
+       </h4>
+       <ul>
+        <li>
+         当社にて緊急対応が必要と判断した場合、緊急工事／メンテナンスを当社の判断で実施する場合がございます。
+        </li>
+        <li>
+         緊急工事／メンテナンスの実施については、お客さまのサービス利用に影響がない場合、お客さまへの通知はいたしません。
+        </li>
+        <li>
+         お客さまのサービス利用に影響がある場合、緊急工事の前後いずれかの時点でメールまたは当社サイト等にて通知いたします。
+        </li>
+       </ul>
+       <h4 id="434">
+        4.3.4 障害連絡
+        <a class="headerlink" href="#434" title="Permanent link">
+         ¶
+        </a>
+       </h4>
+       <ul>
+        <li>
+         当社にてサービス障害と判断した場合は、メールまたは当社サイト等にて通知いたします。
+        </li>
+       </ul>
+       <p>
+        <br/>
+        <br/>
+        <br/>
+       </p>
+       <h2 id="5-1">
+        5. 付録１.　用語の解説
+        <a class="headerlink" href="#5-1" title="Permanent link">
+         ¶
+        </a>
+       </h2>
+       <p>
+        本文中で利用する用語について以下に解説します。
+       </p>
+       <table border="1" style="border-collapse: collapse" width="1000">
+        <tbody>
+         <tr>
+          <th>
+           用語
+          </th>
+          <th>
+           解説
+          </th>
+         </tr>
+         <tr>
+          <td>
+           仮想マシン（VM）
+          </td>
+          <td>
+           物理ハードウェアシステム上に作成され、固有のCPU、メモリー、ネットワーク・インターフェース、ストレージを持ち仮想コンピュータシステムとして機能する仮想環境のこと。
+          </td>
+         </tr>
+         <tr>
+          <td>
+           データストア
+          </td>
+          <td>
+           データを決められた形式で記憶装置に永続的に保存・蓄積する論理的なストレージのこと。
+          </td>
+         </tr>
+         <tr>
+          <td>
+           閉域網
+          </td>
+          <td>
+           特定の通信事業者で閉じられたネットワークのこと。
+          </td>
+         </tr>
+         <tr>
+          <td>
+           スナップショット
+          </td>
+          <td>
+           ある時点のファイルシステムのイメージを保持したもの。
+          </td>
+         </tr>
+         <tr>
+          <td>
+           ポータルサイト
+          </td>
+          <td>
+           VMの操作をするための、ウェブサイトのこと。
+          </td>
+         </tr>
+         <tr>
+          <td>
+           契約者パネル
+          </td>
+          <td>
+           本サービスの各種サービスの設定や申し込みが可能なお客さま専用のツールのこと。
+          </td>
+         </tr>
+        </tbody>
+       </table>
+       <p>
+        <br/>
+       </p>
+       <h2 id="6">
+        6. 変更履歴
+        <a class="headerlink" href="#6" title="Permanent link">
+         ¶
+        </a>
+       </h2>
+       <table border="1" style="border-collapse: collapse" width="1000">
+        <tbody>
+         <tr>
+          <th>
+           版数・日付
+          </th>
+          <th>
+           変更理由
+          </th>
+          <th>
+           変更内容
+          </th>
+         </tr>
+         <tr>
+          <td>
+           1.0 （2021.3.1）
+          </td>
+          <td>
+           新規作成
+          </td>
+          <td>
+          </td>
+         </tr>
+         <tr>
+          <td>
+           1.1 （2021.4.16）
+          </td>
+          <td>
+           新規メニュー追加
+          </td>
+          <td>
+           Remote Desktop Services（SAL）の追加
+          </td>
+         </tr>
+         <tr>
+          <td>
+           1.2 （2021.11.25）
+          </td>
+          <td>
+           新規メニュー追加
+          </td>
+          <td>
+           FortiVM（ファイアウォール・UTM）の追加
+          </td>
+         </tr>
+         <tr>
+          <td>
+           1.3 （2022.11.27）
+          </td>
+          <td>
+           OSプラン追加
+          </td>
+          <td>
+           Ubuntu Server 20.04の追加
+          </td>
+         </tr>
+         <tr>
+          <td>
+           1.4 （2022.3.1）
+          </td>
+          <td>
+           OSプラン追加
+          </td>
+          <td>
+           AlmaLinux 8.4 追加 Rocky Linux 8.4 追加
+          </td>
+         </tr>
+         <tr>
+          <td>
+           1.5 （2022.7.22）
+          </td>
+          <td>
+           新規メニュー追加
+          </td>
+          <td>
+           基本サーバー16コアプランの追加
+          </td>
+         </tr>
+         <tr>
+          <td>
+           1.6 （2022.10.3）
+          </td>
+          <td>
+           ライセンスオプション FortiVMのバージョン変更
+          </td>
+          <td>
+           FortiOSの提供バージョンを7.0.6に変更
+          </td>
+         </tr>
+         <tr>
+          <td>
+           1.7 （2022.11.1）
+          </td>
+          <td>
+           <ul>
+            <li>
+             ライセンスオプション FortiVMのバージョン変更
+            </li>
+            <li>
+             マネジメントオプション ドメイン名の変更
+            </li>
+           </ul>
+          </td>
+          <td>
+           <ul>
+            <li>
+             FortiVMの提供内容記載修正
+            </li>
+            <li>
+             ドメイン名代行申請、指定事業者レジストラ変更申し込み時の注意事項を追記
+            </li>
+           </ul>
+          </td>
+         </tr>
+         <tr>
+          <td>
+           1.8 （2022.12.5）
+          </td>
+          <td>
+           各種仕様変更
+          </td>
+          <td>
+           <ul>
+            <li>
+             ポータルサイトの変更
+            </li>
+            <li>
+             ネットワークオプションの変更（ポータルサイトセキュアアクセス廃止）
+            </li>
+            <li>
+             ポータルサイトへのアクセス認証方式の変更
+            </li>
+            <li>
+             基本サーバの標準提供機能に管理機能NWを追加
+            </li>
+            <li>
+             仮想DISK（追加領域）の1VMあたりのDISK数を最大1から2に変更
+            </li>
+            <li>
+             その他軽微な修正
+            </li>
+           </ul>
+          </td>
+         </tr>
+         <tr>
+          <td>
+           1.9 （2023.2.1）
+          </td>
+          <td>
+           <ul>
+            <li>
+             OSプラン追加
+            </li>
+            <li>
+             ライセンスオプション(SQL Server)追加
+            </li>
+           </ul>
+          </td>
+          <td>
+           <ul>
+            <li>
+             Windows Server 2022の追加
+            </li>
+            <li>
+             RedHat Enterprise Linux 9.1の追加
+            </li>
+            <li>
+             SQL Server 2022の追加
+            </li>
+           </ul>
+          </td>
+         </tr>
+         <tr>
+          <td>
+           2.0 （2023.7.3）
+          </td>
+          <td>
+           <ul>
+            <li>
+             OSプラン追加
+            </li>
+            <li>
+             SQL Serverモビリティに関する記載修正
+            </li>
+           </ul>
+          </td>
+          <td>
+           <ul>
+            <li>
+             AlmaLinux 9.1の追加
+            </li>
+            <li>
+             Rocky Linux 9.1の追加
+            </li>
+            <li>
+             Ubuntu Server 22.04の追加
+            </li>
+            <li>
+             SQL Serverモビリティにおけるライセンス確認フォーム提出に関する記載削除
+            </li>
+           </ul>
+          </td>
+         </tr>
+         <tr>
+          <td>
+           2.1 （2023.11.1）
+          </td>
+          <td>
+           <ul>
+            <li>
+             「Remote Desktop Services」に関する修正
+            </li>
+            <li>
+             お問い合わせ窓口に関する修正
+            </li>
+            <li>
+             管理機能部に機能追加
+            </li>
+           </ul>
+          </td>
+          <td>
+           <ul>
+            <li>
+             「Remote Desktop Services」の記載修正
+            </li>
+            <li>
+             お問い合わせ窓口のお問い合わせ先の記載修正
+            </li>
+            <li>
+             管理機能部に「バックアップサービス（Acronis Cyber Protect Cloud）接続用Proxy」と「SmartConnect Cloud Monitor（Mackerel）接続用Proxy」を追加
+            </li>
+           </ul>
+          </td>
+         </tr>
+         <tr>
+          <td>
+           2.2 （2023.12.18）
+          </td>
+          <td>
+           新規メニュー追加
+          </td>
+          <td>
+           基本サーバ―のサーバープランに24コアプラン追加
+          </td>
+         </tr>
+         <tr>
+          <td>
+           2.3 （2024.3.8）
+          </td>
+          <td>
+           各種仕様変更
+          </td>
+          <td>
+           <ul>
+            <li>
+             ポータルサイトへのアクセス時の認証方式を変更
+            </li>
+            <li>
+             ポータルサイト（VCD）アカウント追加/削除の記載修正
+            </li>
+           </ul>
+          </td>
+         </tr>
+         <tr>
+          <td>
+           2.4 （2024.6.3）
+          </td>
+          <td>
+           各種仕様変更
+          </td>
+          <td>
+           <ul>
+            <li>
+             ポータルサイトアカウントの上限数を10から30に変更
+            </li>
+            <li>
+             その他微修正
+            </li>
+           </ul>
+          </td>
+         </tr>
+         <tr>
+          <td>
+           2.5 （2024.6.28）
+          </td>
+          <td>
+           OSプラン変更
+          </td>
+          <td>
+           下記OSの新規提供終了
+           <ul>
+            <li>
+             CentOS 7.9（64bit）
+            </li>
+            <li>
+             RedHat Enterprise Linux 7.9（64bit）
+            </li>
+            <li>
+             Ubuntu Server 20.04（64bit）
+            </li>
+           </ul>
+          </td>
+         </tr>
+         <tr>
+          <td>
+           3.0 （2024.10.1）
+          </td>
+          <td>
+           リソースプール型の新規提供開始
+          </td>
+          <td>
+           リソースプール型の新規提供開始
+          </td>
+         </tr>
+         <tr>
+          <td>
+           3.1 （2024.12.2）
+          </td>
+          <td>
+           各種仕様変更
+          </td>
+          <td>
+           <ul>
+            <li>
+             管理機能NWにおいて、「スマートコネクト CI/マネージドサービス　標準監視ツール接続用Proxy」を追加
+            </li>
+            <li>
+             リソースプール機能における備考追加
+            </li>
+           </ul>
+          </td>
+         </tr>
+         <tr>
+          <td>
+           3.2 （2025.3.17）
+          </td>
+          <td>
+           各種仕様記載の追加
+          </td>
+          <td>
+           <ul>
+            <li>
+             ライセンスオプションの「FortiVM」の新規販売停止
+            </li>
+            <li>
+             ライセンスオプションの「FortiVM_v2」の申込受付開始
+            </li>
+            <li>
+             ライセンスオプションの「FortiVM」の「解約完了までの期間」を7営業日から10営業日に変更
+            </li>
+            <li>
+             ポータルサイトアカウントの削除時にvApp/VMの所有権変更について注意書きを追加
+            </li>
+            <li>
+             FortiVMのCPUコア数の設定値について注意書きを追加
+            </li>
+            <li>
+             提供OSに「Windows Server 2025 Standard」を追加
+            </li>
+           </ul>
+          </td>
+         </tr>
+         <tr>
+          <td>
+           3.3 （2025.4.25）
+          </td>
+          <td>
+           仕様改訂
+          </td>
+          <td>
+           運用管理責任者、運用管理担当者に関する記述を修正
+          </td>
+         </tr>
+         <tr>
+          <td>
+           3.4 （2025.6.23）
+          </td>
+          <td>
+           VMware Cloud Foundation as a Service（VCFaaS）対応
+          </td>
+          <td>
+           <ul>
+            <li>
+             リソースプール機能に「NSX_VLAN（オーバーレイネットワーク）」機能追加
+            </li>
+            <li>
+             ポータルサイト（VCD）に「テナント監視」機能追加
+            </li>
+           </ul>
+          </td>
+         </tr>
+         <tr>
+          <td>
+           3.5 （2025.12.24）
+          </td>
+          <td>
+           仕様改定
+          </td>
+          <td>
+           <ul>
+            <li>
+             管理機能部の「SmartConnect Cloud Monitor（Mackerel）接続用Proxy」を廃止
+            </li>
+            <li>
+             各種注釈追記
+            </li>
+           </ul>
+          </td>
+         </tr>
+        </tbody>
+       </table>
+      </article>
+     </div>
+    </div>
+   </main>
+   <footer class="md-footer">
+    <div class="md-footer-meta md-typeset">
+     <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+       <div class="md-copyright__highlight">
+        Copyright © 2023 - NTT SmartConnect, Inc.
+       </div>
+      </div>
+     </div>
+    </div>
+   </footer>
+  </div>
+  <div class="md-dialog" data-md-component="dialog">
+   <div class="md-dialog__inner md-typeset">
+   </div>
+  </div>
+ </body>
 </html>
