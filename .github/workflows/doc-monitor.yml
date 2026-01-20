@@ -91,8 +91,14 @@ jobs:
             });
 
       - name: Send Discord notification
-        if: (steps.diff.outputs.changed == 'true' || inputs.test_mode) && secrets.DISCORD_WEBHOOK_URL != ''
+        if: steps.diff.outputs.changed == 'true' || inputs.test_mode
+        env:
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
         run: |
+          if [ -z "$DISCORD_WEBHOOK_URL" ]; then
+            echo "⚠️  Discord webhook URL not set. Skipping Discord notification."
+            exit 0
+          fi
           python scripts/notify_discord.py \
             "${{ secrets.DISCORD_WEBHOOK_URL }}" \
             "${{ steps.fetch.outputs.date || steps.test_date.outputs.date }}" \
