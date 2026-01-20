@@ -246,32 +246,53 @@
             line-height: 1.5;
         }
 
-        /* Persistent highlight for changed content in iframe */
-        .change-highlight-added {
+        /* Persistent highlight for changed content in iframe - VERY strong CSS */
+        .change-highlight-added,
+        .change-highlight-added * {
             background-color: #d4edda !important;
-            border: 2px solid #28a745 !important;
-            border-radius: 4px !important;
-            padding: 4px !important;
-            box-shadow: 0 0 10px rgba(40, 167, 69, 0.5) !important;
+        }
+
+        .change-highlight-added {
+            border: 3px solid #28a745 !important;
+            border-radius: 6px !important;
+            padding: 8px !important;
+            margin: 4px 0 !important;
+            box-shadow: 0 0 15px rgba(40, 167, 69, 0.8) !important;
             transition: all 0.3s ease !important;
+            outline: 2px solid #28a745 !important;
+            outline-offset: 2px !important;
+        }
+
+        .change-highlight-deleted,
+        .change-highlight-deleted * {
+            background-color: #f8d7da !important;
         }
 
         .change-highlight-deleted {
-            background-color: #f8d7da !important;
-            border: 2px solid #dc3545 !important;
-            border-radius: 4px !important;
-            padding: 4px !important;
-            box-shadow: 0 0 10px rgba(220, 53, 69, 0.5) !important;
+            border: 3px solid #dc3545 !important;
+            border-radius: 6px !important;
+            padding: 8px !important;
+            margin: 4px 0 !important;
+            box-shadow: 0 0 15px rgba(220, 53, 69, 0.8) !important;
             transition: all 0.3s ease !important;
+            outline: 2px solid #dc3545 !important;
+            outline-offset: 2px !important;
+        }
+
+        .change-highlight-modified,
+        .change-highlight-modified * {
+            background-color: #fff3cd !important;
         }
 
         .change-highlight-modified {
-            background-color: #fff3cd !important;
-            border: 2px solid #ffc107 !important;
-            border-radius: 4px !important;
-            padding: 4px !important;
-            box-shadow: 0 0 10px rgba(255, 193, 7, 0.5) !important;
+            border: 3px solid #ffc107 !important;
+            border-radius: 6px !important;
+            padding: 8px !important;
+            margin: 4px 0 !important;
+            box-shadow: 0 0 15px rgba(255, 193, 7, 0.8) !important;
             transition: all 0.3s ease !important;
+            outline: 2px solid #ffc107 !important;
+            outline-offset: 2px !important;
         }
 
         .change-highlight-flash-added {
@@ -730,15 +751,40 @@
                         }
                     }
 
-                    // Search for the text in the section
+                    // Search for the text in the section's content (not the heading)
                     const previewText = searchText.substring(0, 50); // First 50 chars
-                    targetElement = findElementWithText(sectionElement, previewText);
+
+                    // Start search from section's next sibling or children
+                    let searchRoot = sectionElement.parentElement;
+                    if (searchRoot) {
+                        targetElement = findElementWithText(searchRoot, previewText);
+                    }
+
+                    if (!targetElement) {
+                        // Try searching within the section itself
+                        targetElement = findElementWithText(sectionElement, previewText);
+                    }
                 }
 
-                if (!targetElement) {
-                    // Fallback: highlight the section itself
-                    targetElement = sectionElement;
+                if (!targetElement || targetElement.tagName.match(/^H[1-6]$/)) {
+                    // If not found or if it's a heading, look for next meaningful content
+                    // Find the next paragraph, div, table, or list after the section
+                    let nextElement = sectionElement.nextElementSibling;
+                    while (nextElement) {
+                        if (nextElement.tagName.match(/^(P|DIV|TABLE|UL|OL|DL)$/)) {
+                            targetElement = nextElement;
+                            break;
+                        }
+                        nextElement = nextElement.nextElementSibling;
+                    }
+
+                    // If still nothing, highlight a larger container
+                    if (!targetElement) {
+                        targetElement = sectionElement.parentElement || sectionElement;
+                    }
                 }
+
+                console.log('Target element for highlight:', targetElement);
 
                 // Apply persistent highlight with color based on type
                 const highlightClass = `change-highlight-${highlightType}`;
