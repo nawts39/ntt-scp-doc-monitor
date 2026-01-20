@@ -246,6 +246,61 @@
             line-height: 1.5;
         }
 
+        /* Persistent highlight for changed content in iframe */
+        .change-highlight-added {
+            background-color: #d4edda !important;
+            border: 2px solid #28a745 !important;
+            border-radius: 4px !important;
+            padding: 4px !important;
+            box-shadow: 0 0 10px rgba(40, 167, 69, 0.5) !important;
+            transition: all 0.3s ease !important;
+        }
+
+        .change-highlight-deleted {
+            background-color: #f8d7da !important;
+            border: 2px solid #dc3545 !important;
+            border-radius: 4px !important;
+            padding: 4px !important;
+            box-shadow: 0 0 10px rgba(220, 53, 69, 0.5) !important;
+            transition: all 0.3s ease !important;
+        }
+
+        .change-highlight-modified {
+            background-color: #fff3cd !important;
+            border: 2px solid #ffc107 !important;
+            border-radius: 4px !important;
+            padding: 4px !important;
+            box-shadow: 0 0 10px rgba(255, 193, 7, 0.5) !important;
+            transition: all 0.3s ease !important;
+        }
+
+        .change-highlight-flash-added {
+            animation: flashHighlightAdded 0.5s ease;
+        }
+
+        .change-highlight-flash-deleted {
+            animation: flashHighlightDeleted 0.5s ease;
+        }
+
+        .change-highlight-flash-modified {
+            animation: flashHighlightModified 0.5s ease;
+        }
+
+        @keyframes flashHighlightAdded {
+            0%, 100% { background-color: #d4edda; }
+            50% { background-color: #a3d9a5; }
+        }
+
+        @keyframes flashHighlightDeleted {
+            0%, 100% { background-color: #f8d7da; }
+            50% { background-color: #f5b7b1; }
+        }
+
+        @keyframes flashHighlightModified {
+            0%, 100% { background-color: #fff3cd; }
+            50% { background-color: #ffe082; }
+        }
+
         .summary-stats {
             display: flex;
             gap: 20px;
@@ -307,12 +362,12 @@
         <button id="scrollSyncBtn" onclick="toggleScrollSync()" style="background: #28a745; color: white;">
             🔗 Scroll Sync: ON
         </button>
-        <a href="index.html" style="margin-left: auto; text-decoration: none;">
+        <a href="../index.html" style="margin-left: auto; text-decoration: none;">
             <button>← Back to List</button>
         </a>
     </div>
 
-    <div class="container" id="viewContainer">
+    <div class="container view-mode-split" id="viewContainer">
         <div class="summary-stats" id="summaryStats"></div>
 
         <!-- Change Summary Section -->
@@ -529,36 +584,68 @@
             summaryList.innerHTML = html;
         }
 
+        let currentHighlightedElements = [];
+
         function jumpToChange(changeIndex, anchorId) {
-            // Jump to the change location in the NEW (current) version iframe
+            const frameOld = document.getElementById('frameOld');
             const frameNew = document.getElementById('frameNew');
 
-            if (!frameNew || !frameNew.contentWindow) {
-                console.error('Could not access iframe');
+            if (!frameOld || !frameNew || !frameOld.contentWindow || !frameNew.contentWindow) {
+                console.error('Could not access iframes');
                 return;
             }
 
-            try {
-                if (anchorId) {
-                    // If we have an anchor ID, navigate to it in the iframe
-                    const targetUrl = `../snapshots/${config.date}.html#${anchorId}`;
-                    frameNew.contentWindow.location.href = targetUrl;
+            const change = config.changeSummary[changeIndex];
 
-                    // Scroll the preview panel into view
+            try {
+                // Clear previous highlights
+                currentHighlightedElements.forEach(el => {
+                    el.classList.remove('change-highlight-added');
+                    el.classList.remove('change-highlight-deleted');
+                    el.classList.remove('change-highlight-modified');
+                    el.classList.remove('change-highlight-flash-added');
+                    el.classList.remove('change-highlight-flash-deleted');
+                    el.classList.remove('change-highlight-flash-modified');
+                });
+                currentHighlightedElements = [];
+
+                // Determine change type
+                const changeType = determineChangeType(change.type);
+
+                if (anchorId) {
+                    // Navigate both iframes to anchor
+                    const targetUrlNew = `../snapshots/${config.date}.html#${anchorId}`;
+                    const targetUrlOld = `../snapshots/${config.prevDate}.html#${anchorId}`;
+
+                    frameNew.contentWindow.location.href = targetUrlNew;
+                    frameOld.contentWindow.location.href = targetUrlOld;
+
+                    // Wait for navigation and then highlight
                     setTimeout(() => {
-                        const panelNew = document.getElementById('panelNew');
-                        if (panelNew) {
-                            panelNew.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                        // Scroll panels into view
+                        const panelOld = document.getElementById('panelOld');
+                        if (panelOld) {
+                            panelOld.scrollIntoView({ behavior: 'smooth', block: 'start' });
                         }
 
-                        // Flash highlight effect
-                        highlightIframeSection(frameNew, anchorId);
+                        // Highlight based on change type
+                        if (changeType === 'added') {
+                            // Green highlight in NEW only
+                            highlightChangedContent(frameNew, anchorId, change, 'added');
+                        } else if (changeType === 'deleted') {
+                            // Red highlight in OLD only
+                            highlightChangedContent(frameOld, anchorId, change, 'deleted');
+                        } else if (changeType === 'modified') {
+                            // Yellow highlight in both
+                            highlightChangedContent(frameOld, anchorId, change, 'modified');
+                            highlightChangedContent(frameNew, anchorId, change, 'modified');
+                        }
                     }, 500);
                 } else {
-                    // Fallback: just scroll the iframe panel into view
-                    const panelNew = document.getElementById('panelNew');
-                    if (panelNew) {
-                        panelNew.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    // Fallback: scroll panels into view
+                    const panelOld = document.getElementById('panelOld');
+                    if (panelOld) {
+                        panelOld.scrollIntoView({ behavior: 'smooth', block: 'start' });
                     }
                 }
             } catch (e) {
@@ -566,25 +653,104 @@
             }
         }
 
-        function highlightIframeSection(iframe, anchorId) {
-            // Add temporary highlight to the section
+        function determineChangeType(typeString) {
+            // Determine if it's added, deleted, or modified based on type string
+            if (typeString.includes('追加:') || typeString.includes('追加：')) {
+                return 'added';
+            } else if (typeString.includes('削除:') || typeString.includes('削除：')) {
+                return 'deleted';
+            } else if (typeString.includes('変更:') || typeString.includes('変更：')) {
+                return 'modified';
+            }
+            return 'modified'; // Default
+        }
+
+        function highlightChangedContent(iframe, anchorId, change, highlightType) {
+            // Find and highlight the specific changed content
             try {
                 const iframeDoc = iframe.contentWindow.document;
-                const targetElement = iframeDoc.getElementById(anchorId);
+                const sectionElement = iframeDoc.getElementById(anchorId);
 
-                if (targetElement) {
-                    // Add highlight class/style
-                    const originalBg = targetElement.style.backgroundColor;
-                    targetElement.style.backgroundColor = '#fff3cd';
-                    targetElement.style.transition = 'background-color 0.3s';
-
-                    setTimeout(() => {
-                        targetElement.style.backgroundColor = originalBg;
-                    }, 2000);
+                if (!sectionElement) {
+                    console.warn('Section element not found:', anchorId);
+                    return;
                 }
+
+                // Find the element containing the changed text
+                let targetElement = null;
+
+                if (change.preview && change.preview.length > 5) {
+                    // For modified changes, extract the relevant part
+                    let searchText = change.preview;
+                    if (change.preview.includes('[旧]') && change.preview.includes('[新]')) {
+                        // This is a modification, extract the appropriate part
+                        if (highlightType === 'deleted' || iframe.id === 'frameOld') {
+                            // Extract old text: [旧] ... →
+                            const oldMatch = searchText.match(/\[旧\]\s*(.+?)\s*→/);
+                            if (oldMatch) searchText = oldMatch[1];
+                        } else {
+                            // Extract new text: → [新] ...
+                            const newMatch = searchText.match(/→\s*\[新\]\s*(.+)/);
+                            if (newMatch) searchText = newMatch[1];
+                        }
+                    }
+
+                    // Search for the text in the section
+                    const previewText = searchText.substring(0, 50); // First 50 chars
+                    targetElement = findElementWithText(sectionElement, previewText);
+                }
+
+                if (!targetElement) {
+                    // Fallback: highlight the section itself
+                    targetElement = sectionElement;
+                }
+
+                // Apply persistent highlight with color based on type
+                const highlightClass = `change-highlight-${highlightType}`;
+                const flashClass = `change-highlight-flash-${highlightType}`;
+
+                targetElement.classList.add(highlightClass);
+                targetElement.classList.add(flashClass);
+
+                // Store reference for later removal
+                currentHighlightedElements.push(targetElement);
+
+                // Scroll to the highlighted element
+                targetElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
             } catch (e) {
-                console.error('Could not highlight section:', e);
+                console.error('Could not highlight content:', e);
             }
+        }
+
+        function findElementWithText(rootElement, searchText) {
+            // Recursively search for element containing the text
+            const normalizedSearch = searchText.toLowerCase().replace(/\s+/g, ' ').trim();
+
+            function searchInElement(element) {
+                // Check if this element's text content contains the search text
+                const elementText = element.textContent.toLowerCase().replace(/\s+/g, ' ').trim();
+
+                if (elementText.includes(normalizedSearch)) {
+                    // If this is a leaf element (or small element), return it
+                    if (element.children.length === 0 || elementText.length < 200) {
+                        return element;
+                    }
+
+                    // Otherwise, search in children
+                    for (let child of element.children) {
+                        const found = searchInElement(child);
+                        if (found) return found;
+                    }
+
+                    // If no child matched, return this element
+                    return element;
+                }
+
+                return null;
+            }
+
+            return searchInElement(rootElement);
         }
 
         function loadMetaInfo() {
