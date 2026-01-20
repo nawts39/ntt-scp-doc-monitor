@@ -23,7 +23,7 @@ def get_snapshots() -> list[str]:
 
 
 def calculate_diff(prev_file: str, latest_file: str) -> Optional[str]:
-    """Calculate diff between two files.
+    """Calculate diff between two files with extended context.
 
     Args:
         prev_file: Path to previous snapshot
@@ -33,8 +33,9 @@ def calculate_diff(prev_file: str, latest_file: str) -> Optional[str]:
         Diff string if changes exist, None otherwise
     """
     try:
+        # Use unified=10 for more context (10 lines before/after changes)
         result = subprocess.run(
-            ["git", "diff", "--no-index", "--unified=3", prev_file, latest_file],
+            ["git", "diff", "--no-index", "--unified=10", prev_file, latest_file],
             capture_output=True,
             text=True
         )

@@ -24,47 +24,59 @@ def send_discord_notification(webhook_url: str, date: str, repo_url: str) -> Non
     with open(summary_path, 'r', encoding='utf-8') as f:
         summary = f.read()
 
-    # Read diff (first 1000 chars for Discord embed)
+    # Read diff and split into chunks for Discord embed
     diff_path = Path("diff_details.txt")
-    diff_preview = ""
+    diff_chunks = []
     if diff_path.exists():
         with open(diff_path, 'r', encoding='utf-8') as f:
             diff_content = f.read()
+
             # Discord embed field limit: 1024 chars
-            diff_preview = diff_content[:900]
-            if len(diff_content) > 900:
-                diff_preview += "\n\n... (差分が長いためGitHubで確認してください)"
+            # Split into multiple fields if needed (max 3 chunks)
+            chunk_size = 950  # Leave room for code block markers
+            for i in range(0, min(len(diff_content), chunk_size * 3), chunk_size):
+                chunk = diff_content[i:i + chunk_size]
+                diff_chunks.append(chunk)
+
+            # Add truncation notice if content is very long
+            if len(diff_content) > chunk_size * 3:
+                diff_chunks.append(f"\n... (残り {len(diff_content) - chunk_size * 3} 文字)")
 
     # Create Discord embed
     embed = {
         "title": f"🚨 NTT SCP仕様書が更新されました",
         "description": f"**日付**: {date}\n\n{summary}",
         "color": 15158332,  # Red color
-        "fields": [
-            {
-                "name": "📄 スナップショット",
-                "value": f"[GitHub で確認]({repo_url}/blob/main/snapshots/{date}.html)",
-                "inline": False
-            },
-            {
-                "name": "📊 Issues",
-                "value": f"[詳細を確認]({repo_url}/issues)",
-                "inline": False
-            }
-        ],
+        "fields": [],
         "timestamp": None,
         "footer": {
             "text": "NTT SCP Document Monitor"
         }
     }
 
-    # Add diff preview if available
-    if diff_preview:
-        embed["fields"].insert(0, {
-            "name": "🔍 差分プレビュー",
-            "value": f"```diff\n{diff_preview}\n```",
+    # Add diff chunks as separate fields
+    if diff_chunks:
+        for idx, chunk in enumerate(diff_chunks[:3]):  # Max 3 chunks
+            field_name = f"🔍 差分プレビュー" if idx == 0 else f"🔍 差分プレビュー (続き {idx + 1})"
+            embed["fields"].append({
+                "name": field_name,
+                "value": f"```diff\n{chunk}\n```",
+                "inline": False
+            })
+
+    # Add links
+    embed["fields"].extend([
+        {
+            "name": "📄 完全な差分",
+            "value": f"[GitHub で確認]({repo_url}/blob/main/snapshots/{date}.html)",
             "inline": False
-        })
+        },
+        {
+            "name": "📊 Issues",
+            "value": f"[詳細を確認]({repo_url}/issues)",
+            "inline": False
+        }
+    ])
 
     payload = {
         "username": "Document Monitor",
