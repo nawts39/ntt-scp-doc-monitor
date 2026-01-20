@@ -978,7 +978,8 @@
         }
 
         function findParagraphInRange(startElement, endElement, searchText) {
-            // Find a specific <p> or .admonition element containing the search text
+            // Find a specific <p> element containing the search text
+            // Prefer inner <p> over container elements like .admonition
             const normalizedSearch = searchText.toLowerCase().replace(/\s+/g, ' ').trim();
             let currentElement = startElement.nextElementSibling;
 
@@ -987,24 +988,22 @@
 
                 // Check if this element matches
                 if (elementText.includes(normalizedSearch)) {
-                    // Prefer specific elements like .admonition or <p>
-                    if (currentElement.classList.contains('admonition')) {
-                        return currentElement;
-                    } else if (currentElement.tagName === 'P') {
-                        return currentElement;
-                    } else {
-                        // Search for .admonition or <p> within this element
-                        const admonition = currentElement.querySelector('.admonition');
-                        if (admonition && admonition.textContent.toLowerCase().includes(normalizedSearch)) {
-                            return admonition;
+                    // First, try to find a <p> element within this element
+                    const paragraphs = currentElement.querySelectorAll('p');
+                    for (let p of paragraphs) {
+                        const pText = p.textContent.toLowerCase().replace(/\s+/g, ' ').trim();
+                        if (pText.includes(normalizedSearch)) {
+                            return p;
                         }
-                        const paragraph = currentElement.querySelector('p');
-                        if (paragraph && paragraph.textContent.toLowerCase().includes(normalizedSearch)) {
-                            return paragraph;
-                        }
-                        // If no specific element found, return this element
+                    }
+
+                    // If this element itself is a <p>, return it
+                    if (currentElement.tagName === 'P') {
                         return currentElement;
                     }
+
+                    // Last resort: return the container
+                    return currentElement;
                 }
 
                 currentElement = currentElement.nextElementSibling;
