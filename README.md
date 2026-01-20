@@ -65,7 +65,22 @@ git push -u origin main
   - "Workflow permissions": "Read and write permissions" を有効化
   - "Allow GitHub Actions to create and approve pull requests" をチェック
 
-### 4. 初回実行（手動テスト）
+### 4. Discord Webhook設定（オプション）
+
+Discord通知を有効にする場合:
+
+```bash
+# Discord WebhookURLをGitHub Secretsに登録
+gh secret set DISCORD_WEBHOOK_URL --body "YOUR_DISCORD_WEBHOOK_URL" --repo YOUR_USERNAME/ntt-scp-doc-monitor
+```
+
+または手動で設定:
+1. **Settings > Secrets and variables > Actions**
+2. **New repository secret** をクリック
+3. Name: `DISCORD_WEBHOOK_URL`
+4. Value: Discordから取得したWebhook URL
+
+### 5. 初回実行（手動テスト）
 
 1. GitHubリポジトリの **Actions** タブを開く
 2. "NTT SCP Document Monitor" ワークフローを選択
@@ -77,21 +92,55 @@ git push -u origin main
 ### 自動実行
 
 - 毎日午前9時（JST）に自動実行
-- 変更検知時のみIssue作成
+- 変更検知時のみIssue作成 + Discord通知
 
 ### 手動実行
 
-1. GitHub > Actions > "NTT SCP Document Monitor"
-2. "Run workflow" > "Run workflow"
+#### 通常モード
+```bash
+gh workflow run doc-monitor.yml --repo YOUR_USERNAME/ntt-scp-doc-monitor
+```
+
+または GitHub UI:
+1. **Actions** > "NTT SCP Document Monitor"
+2. **Run workflow** > **Run workflow**
+
+#### テストモード（通知テスト）
+
+```bash
+gh workflow run doc-monitor.yml --repo YOUR_USERNAME/ntt-scp-doc-monitor -f test_mode=true
+```
+
+または GitHub UI:
+1. **Actions** > "NTT SCP Document Monitor"
+2. **Run workflow** をクリック
+3. **test_mode** にチェックを入れる
+4. **Run workflow** をクリック
+
+**テストモードの動作:**
+- 実際のドキュメント取得をスキップ
+- ダミーの差分を生成
+- GitHub Issue + Discord通知を送信
+- スナップショットは保存しない（リポジトリを汚さない）
 
 ### 通知の確認
 
+#### GitHub Issue
 - **Issues**タブに新しいIssueが作成される
 - タイトル: `🚨 NTT SCP仕様書が更新されました (YYYYMMDD)`
 - 内容:
-  - 変更サマリー（追加/削除行数）
-  - 詳細な差分表示
-  - 最新スナップショットへのリンク
+  - 📊 変更サマリー（追加/削除行数）
+  - 📝 詳細な差分表示
+  - 🔗 最新スナップショットへのリンク
+
+#### Discord通知
+- 指定したDiscordチャンネルに通知が投稿される
+- **埋め込み（Embed）形式**:
+  - 🚨 タイトル: NTT SCP仕様書が更新されました
+  - 📊 変更サマリー
+  - 🔍 差分プレビュー（最初の900文字）
+  - 📄 GitHubスナップショットへのリンク
+  - 📊 GitHub Issuesへのリンク
 
 ### 履歴の確認
 
