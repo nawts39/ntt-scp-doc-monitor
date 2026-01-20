@@ -4,6 +4,12 @@ on:
   schedule:
     - cron: '0 0 * * *'  # 毎日午前9時(JST) = UTC 0時
   workflow_dispatch:  # 手動実行も可能
+    inputs:
+      test_mode:
+        description: 'テストモード（ダミー差分で通知テスト）'
+        required: false
+        type: boolean
+        default: false
 
 jobs:
   check-document:
@@ -30,6 +36,7 @@ jobs:
 
       - name: Fetch document
         id: fetch
+        if: ${{ !inputs.test_mode }}
         run: |
           DATE=$(date +%Y%m%d)
           echo "date=$DATE" >> $GITHUB_OUTPUT
@@ -39,13 +46,32 @@ jobs:
             "https://cloud.nttsmc.com/doc/scp/scp_type-v_spec_resource-pool/" \
             "snapshots/${DATE}.html"
 
+      - name: Set date for test mode
+        id: test_date
+        if: ${{ inputs.test_mode }}
+        run: |
+          DATE=$(date +%Y%m%d)
+          echo "date=${DATE}" >> $GITHUB_OUTPUT
+
+      - name: Create test diff
+        if: ${{ inputs.test_mode }}
+        run: |
+          echo "🧪 Test mode: Creating dummy diff files"
+          python scripts/create_test_diff.py
+
       - name: Check for changes
         id: diff
+        if: ${{ !inputs.test_mode }}
         run: |
           python scripts/check_diff.py
 
+      - name: Set test mode output
+        if: ${{ inputs.test_mode }}
+        run: |
+          echo "changed=true" >> $GITHUB_OUTPUT
+
       - name: Create Issue if changed
-        if: steps.diff.outputs.changed == 'true'
+        if: steps.diff.outputs.changed == 'true' || inputs.test_mode
         uses: actions/github-script@v7
         with:
           script: |
@@ -53,18 +79,27 @@ jobs:
             const diffContent = fs.readFileSync('diff_summary.txt', 'utf8');
             const diffDetails = fs.readFileSync('diff_details.txt', 'utf8');
 
+            const testPrefix = context.payload.inputs?.test_mode ? '[テスト] ' : '';
+            const date = '${{ steps.fetch.outputs.date || steps.test_date.outputs.date }}';
+
             await github.rest.issues.create({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              title: `🚨 NTT SCP仕様書が更新されました (${process.env.DATE})`,
-              body: `## 変更検知\n\n${diffContent}\n\n<details>\n<summary>詳細な差分</summary>\n\n\`\`\`diff\n${diffDetails}\n\`\`\`\n\n</details>\n\n[最新スナップショット](https://github.com/${context.repo.owner}/${context.repo.repo}/blob/main/snapshots/${process.env.DATE}.html)`,
+              title: `${testPrefix}🚨 NTT SCP仕様書が更新されました (${date})`,
+              body: `## 変更検知\n\n${diffContent}\n\n<details>\n<summary>詳細な差分</summary>\n\n\`\`\`diff\n${diffDetails}\n\`\`\`\n\n</details>\n\n[最新スナップショット](https://github.com/${context.repo.owner}/${context.repo.repo}/blob/main/snapshots/${date}.html)`,
               labels: ['documentation', 'auto-detected']
             });
-        env:
-          DATE: ${{ steps.fetch.outputs.date }}
+
+      - name: Send Discord notification
+        if: (steps.diff.outputs.changed == 'true' || inputs.test_mode) && secrets.DISCORD_WEBHOOK_URL != ''
+        run: |
+          python scripts/notify_discord.py \
+            "${{ secrets.DISCORD_WEBHOOK_URL }}" \
+            "${{ steps.fetch.outputs.date || steps.test_date.outputs.date }}" \
+            "${{ github.server_url }}/${{ github.repository }}"
 
       - name: Commit and push snapshot
-        if: steps.diff.outputs.changed == 'true'
+        if: steps.diff.outputs.changed == 'true' && !inputs.test_mode
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
@@ -74,6 +109,6 @@ jobs:
           git push
 
       - name: No changes detected
-        if: steps.diff.outputs.changed != 'true'
+        if: steps.diff.outputs.changed != 'true' && !inputs.test_mode
         run: |
           echo "✅ No changes detected. Document is unchanged."
