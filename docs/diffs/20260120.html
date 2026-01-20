@@ -454,9 +454,34 @@
             frameOld.src = `../snapshots/${config.prevDate}.html`;
             frameNew.src = `../snapshots/${config.date}.html`;
 
-            // Setup scroll sync after iframes load
-            frameOld.addEventListener('load', () => setupScrollSync(frameOld, frameNew));
-            frameNew.addEventListener('load', () => setupScrollSync(frameNew, frameOld));
+            // Setup scroll sync and fix base URL after iframes load
+            frameOld.addEventListener('load', () => {
+                fixIframeBasePath(frameOld);
+                setupScrollSync(frameOld, frameNew);
+            });
+            frameNew.addEventListener('load', () => {
+                fixIframeBasePath(frameNew);
+                setupScrollSync(frameNew, frameOld);
+            });
+        }
+
+        function fixIframeBasePath(iframe) {
+            // Fix relative paths in iframe by adding base element
+            try {
+                const iframeDoc = iframe.contentWindow.document;
+                if (iframeDoc && iframeDoc.head) {
+                    // Check if base element already exists
+                    let baseElement = iframeDoc.querySelector('base');
+                    if (!baseElement) {
+                        baseElement = iframeDoc.createElement('base');
+                        // Set base href to the snapshot directory
+                        baseElement.href = window.location.origin + window.location.pathname.replace(/diffs\/[^/]+$/, 'snapshots/');
+                        iframeDoc.head.insertBefore(baseElement, iframeDoc.head.firstChild);
+                    }
+                }
+            } catch (e) {
+                console.warn('Could not fix iframe base path:', e);
+            }
         }
 
         function setupScrollSync(sourceFrame, targetFrame) {
@@ -788,4 +813,3 @@
     </script>
 </body>
 </html>
-// Cache bust: Tue Jan 20 22:35:31 JST 2026
