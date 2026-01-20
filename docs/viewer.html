@@ -824,13 +824,22 @@
 
                     const previewText = searchText.substring(0, 50); // First 50 chars
 
-                    // IMPORTANT: Search only within the section's content area
-                    // Find the next heading to determine section boundary
-                    let searchRoot = sectionElement.parentElement;
-                    let sectionEnd = null;
-
-                    if (searchRoot) {
-                        // Find the next heading at the same or higher level
+                    // IMPORTANT: Search based on html_element type
+                    if (change.html_element === 'content') {
+                        // For heading/content changes, find the heading element itself
+                        // Search for h3 or h4 elements near the section
+                        const headings = sectionElement.parentElement.querySelectorAll('h3, h4');
+                        for (let heading of headings) {
+                            const headingText = heading.textContent.toLowerCase().replace(/\s+/g, ' ').trim();
+                            const searchLower = previewText.toLowerCase().replace(/\s+/g, ' ').trim();
+                            if (headingText.includes(searchLower)) {
+                                targetElement = heading;
+                                break;
+                            }
+                        }
+                    } else if (change.html_element === 'table_row') {
+                        // For table row changes, find the specific <tr> element
+                        let sectionEnd = null;
                         let nextHeading = sectionElement.nextElementSibling;
                         while (nextHeading) {
                             if (nextHeading.tagName && nextHeading.tagName.match(/^H[1-4]$/)) {
@@ -839,8 +848,30 @@
                             }
                             nextHeading = nextHeading.nextElementSibling;
                         }
-
-                        // Search within section bounds
+                        targetElement = findTableRowInRange(sectionElement, sectionEnd, previewText);
+                    } else if (change.html_element === 'paragraph') {
+                        // For paragraph changes, find the specific <p> or .admonition element
+                        let sectionEnd = null;
+                        let nextHeading = sectionElement.nextElementSibling;
+                        while (nextHeading) {
+                            if (nextHeading.tagName && nextHeading.tagName.match(/^H[1-4]$/)) {
+                                sectionEnd = nextHeading;
+                                break;
+                            }
+                            nextHeading = nextHeading.nextElementSibling;
+                        }
+                        targetElement = findParagraphInRange(sectionElement, sectionEnd, previewText);
+                    } else {
+                        // Fallback: use general search within section bounds
+                        let sectionEnd = null;
+                        let nextHeading = sectionElement.nextElementSibling;
+                        while (nextHeading) {
+                            if (nextHeading.tagName && nextHeading.tagName.match(/^H[1-4]$/)) {
+                                sectionEnd = nextHeading;
+                                break;
+                            }
+                            nextHeading = nextHeading.nextElementSibling;
+                        }
                         targetElement = findElementWithTextInRange(sectionElement, sectionEnd, previewText);
                     }
 
@@ -850,40 +881,9 @@
                     }
                 }
 
-                if (!targetElement || targetElement.tagName.match(/^H[1-6]$/)) {
-                    // For heading changes, find the actual H tag that changed
-                    if (change.html_element === 'content' && change.preview && change.preview.includes('1.1')) {
-                        // This is likely a heading change - look for h3 or h4 with the text
-                        const headings = sectionElement.parentElement.querySelectorAll('h3, h4');
-                        for (let heading of headings) {
-                            if (heading.textContent.includes('サービス')) {
-                                targetElement = heading;
-                                break;
-                            }
-                        }
-                    }
-
-                    // If still a heading or not found, look for next meaningful content
-                    if (!targetElement || targetElement.tagName.match(/^H[1-6]$/)) {
-                        let nextElement = sectionElement.nextElementSibling;
-                        while (nextElement) {
-                            if (nextElement.tagName.match(/^(P|DIV|TABLE|UL|OL|DL)$/)) {
-                                targetElement = nextElement;
-                                break;
-                            }
-                            nextElement = nextElement.nextElementSibling;
-                        }
-
-                        // For heading-only changes, highlight the heading itself
-                        if (!targetElement && change.preview && (change.preview.includes('[旧]') || change.preview.includes('サービス概要') || change.preview.includes('サービスの特徴'))) {
-                            targetElement = sectionElement;
-                        }
-
-                        // If still nothing, highlight a larger container
-                        if (!targetElement) {
-                            targetElement = sectionElement.parentElement || sectionElement;
-                        }
-                    }
+                if (!targetElement) {
+                    // Final fallback: highlight the section element itself
+                    targetElement = sectionElement;
                 }
 
                 console.log('Target element for highlight:', targetElement);
@@ -954,6 +954,62 @@
             }
 
             return searchInElement(rootElement);
+        }
+
+        function findTableRowInRange(startElement, endElement, searchText) {
+            // Find a specific <tr> element containing the search text
+            const normalizedSearch = searchText.toLowerCase().replace(/\s+/g, ' ').trim();
+            let currentElement = startElement.nextElementSibling;
+
+            while (currentElement && currentElement !== endElement) {
+                // Look for table elements
+                if (currentElement.tagName === 'TABLE') {
+                    const rows = currentElement.querySelectorAll('tr');
+                    for (let row of rows) {
+                        const rowText = row.textContent.toLowerCase().replace(/\s+/g, ' ').trim();
+                        if (rowText.includes(normalizedSearch)) {
+                            return row;
+                        }
+                    }
+                }
+                currentElement = currentElement.nextElementSibling;
+            }
+            return null;
+        }
+
+        function findParagraphInRange(startElement, endElement, searchText) {
+            // Find a specific <p> or .admonition element containing the search text
+            const normalizedSearch = searchText.toLowerCase().replace(/\s+/g, ' ').trim();
+            let currentElement = startElement.nextElementSibling;
+
+            while (currentElement && currentElement !== endElement) {
+                const elementText = currentElement.textContent.toLowerCase().replace(/\s+/g, ' ').trim();
+
+                // Check if this element matches
+                if (elementText.includes(normalizedSearch)) {
+                    // Prefer specific elements like .admonition or <p>
+                    if (currentElement.classList.contains('admonition')) {
+                        return currentElement;
+                    } else if (currentElement.tagName === 'P') {
+                        return currentElement;
+                    } else {
+                        // Search for .admonition or <p> within this element
+                        const admonition = currentElement.querySelector('.admonition');
+                        if (admonition && admonition.textContent.toLowerCase().includes(normalizedSearch)) {
+                            return admonition;
+                        }
+                        const paragraph = currentElement.querySelector('p');
+                        if (paragraph && paragraph.textContent.toLowerCase().includes(normalizedSearch)) {
+                            return paragraph;
+                        }
+                        // If no specific element found, return this element
+                        return currentElement;
+                    }
+                }
+
+                currentElement = currentElement.nextElementSibling;
+            }
+            return null;
         }
 
         function loadMetaInfo() {
