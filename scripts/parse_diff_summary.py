@@ -1,176 +1,332 @@
 #!/usr/bin/env python3
-"""Parse diff and generate human-readable change summary."""
+"""Advanced diff parser with HTML structure-aware change detection.
+
+This version detects changes at a semantic level, splitting chunks into
+individual logical units (table rows, list items, paragraphs, etc.)
+"""
 
 import re
 from pathlib import Path
-from typing import List, Dict, Tuple
+from typing import List, Dict, Tuple, Optional
+from dataclasses import dataclass, asdict
 
 
-def extract_section_context(lines: List[str], start_idx: int, max_lines: int = 200) -> str:
-    """Extract surrounding context to identify the section.
-
-    Args:
-        lines: All lines from the diff
-        start_idx: Index of the change
-        max_lines: Max lines to look back
-
-    Returns:
-        Section identifier (e.g., "1.2 サービスメニュー")
-    """
-    # Look backwards for section headers (h1-h6)
-    # Prioritize h3-h4 (subsections), then h2, then h1
-    found_headings = []
-
-    for i in range(max(0, start_idx - max_lines), start_idx):
-        line = lines[i]
-
-        # Skip deleted lines
-        if line.startswith('-') and not line.startswith('---'):
-            continue
-
-        # Match HTML headings with id attributes
-        h_match = re.search(r'<h([1-6])[^>]*id=["\']([^"\']+)["\'][^>]*>', line)
-        if h_match:
-            level = int(h_match.group(1))
-            # Look for the next line with actual heading text
-            if i + 1 < len(lines):
-                next_line = lines[i + 1]
-                # Remove leading + if present, and strip HTML tags
-                heading_text = re.sub(r'<[^>]+>', '', next_line.lstrip('+ ')).strip()
-                if heading_text and len(heading_text) > 0:
-                    found_headings.append((level, heading_text, i))
-                    continue
-
-        # Match complete heading tags on single line
-        h_match_single = re.search(r'<h[1-6][^>]*>(.*?)</h[1-6]>', line)
-        if h_match_single:
-            heading_text = re.sub(r'<[^>]+>', '', h_match_single.group(1)).strip()
-            if heading_text and len(heading_text) > 0:
-                level = int(re.search(r'<h([1-6])', line).group(1))
-                found_headings.append((level, heading_text, i))
-                continue
-
-        # Match markdown-style headings
-        md_match = re.match(r'^\+?\s*(#{1,6})\s+(.+)', line)
-        if md_match:
-            level = len(md_match.group(1))
-            heading_text = md_match.group(2).strip()
-            found_headings.append((level, heading_text, i))
-
-    # Return the most recent h2-h4 heading (closest to the change)
-    if found_headings:
-        # Prefer h2-h4 (section/subsection level)
-        section_headings = [(lvl, txt, idx) for lvl, txt, idx in found_headings if 2 <= lvl <= 4]
-        if section_headings:
-            return section_headings[-1][1]  # Return text of the closest one
-        # Fallback to any heading
-        return found_headings[-1][1]
-
-    return "不明なセクション"
+@dataclass
+class Change:
+    """Represents a single semantic change."""
+    section: str
+    type: str
+    line: int
+    preview: str
+    additions: int
+    deletions: int
+    anchor: str
+    detail: str = ""  # Additional context
+    html_element: str = ""  # e.g., "table_row", "list_item", "paragraph"
 
 
-def identify_change_type(added_lines: List[str], removed_lines: List[str]) -> str:
-    """Identify what type of change occurred.
+class HTMLStructureDetector:
+    """Detects HTML structural elements in diff lines."""
 
-    Args:
-        added_lines: Lines that were added
-        removed_lines: Lines that were removed
+    @staticmethod
+    def detect_element_type(lines: List[str]) -> str:
+        """Detect the type of HTML element in the given lines."""
+        combined = ' '.join(lines).lower()
 
-    Returns:
-        Description of change type
-    """
-    added_text = ' '.join(added_lines).lower()
-    removed_text = ' '.join(removed_lines).lower()
+        # Priority order matters
+        if '<tr>' in combined or '<td>' in combined:
+            return "table_row"
+        elif '<li>' in combined:
+            return "list_item"
+        elif '<h1' in combined or '<h2' in combined or '<h3' in combined:
+            return "heading"
+        elif '<p>' in combined or '<p ' in combined:
+            return "paragraph"
+        elif '<div class="admonition' in combined:
+            return "admonition"
+        elif 'class="md-nav' in combined:
+            return "navigation"
+        elif '<a' in combined and 'href=' in combined:
+            return "link"
+        else:
+            return "content"
 
-    # Check for specific patterns
-    if 'warning' in added_text or 'admonition warning' in added_text:
-        return "Warning"
-    elif 'note' in added_text or 'admonition note' in added_text:
-        return "Note"
-    elif 'table' in added_text or '<td>' in added_text:
-        return "テーブル"
-    elif 'nav' in added_text or 'menu' in added_text:
-        return "ナビゲーション"
-    elif '<h' in added_text:
-        return "見出し"
-    elif '<li>' in added_text:
-        return "リスト項目"
-    elif '<p>' in added_text:
-        return "段落"
-    else:
-        return "コンテンツ"
+    @staticmethod
+    def find_element_boundaries(lines: List[str]) -> List[Tuple[int, int]]:
+        """Find boundaries of logical HTML elements in diff lines.
+
+        Returns:
+            List of (start_idx, end_idx) tuples for each element
+        """
+        boundaries = []
+        current_start = None
+        current_element = None
+        stack = []
+
+        for i, line in enumerate(lines):
+            stripped = line.strip()
+
+            # Opening tags that define element boundaries
+            if re.search(r'<(tr|li|p|div|h[1-6])[\s>]', stripped):
+                tag_match = re.search(r'<(tr|li|p|div|h[1-6])[\s>]', stripped)
+                tag = tag_match.group(1)
+
+                if not current_start:
+                    current_start = i
+                    current_element = tag
+                stack.append(tag)
+
+            # Closing tags
+            if re.search(r'</(tr|li|p|div|h[1-6])>', stripped):
+                tag_match = re.search(r'</(tr|li|p|div|h[1-6])>', stripped)
+                tag = tag_match.group(1)
+
+                if stack and stack[-1] == tag:
+                    stack.pop()
+
+                    # If stack is empty, we've closed the element
+                    if not stack and current_start is not None:
+                        boundaries.append((current_start, i + 1))
+                        current_start = None
+                        current_element = None
+
+        # If we have an unclosed element, add it
+        if current_start is not None:
+            boundaries.append((current_start, len(lines)))
+
+        # If no boundaries found, treat entire block as one element
+        if not boundaries and lines:
+            boundaries.append((0, len(lines)))
+
+        return boundaries
 
 
-def get_section_from_snapshot(snapshot_path: Path, line_number: int) -> Tuple[str, str]:
-    """Get section name and anchor ID from snapshot HTML file.
+class SemanticChangeDetector:
+    """Detects semantic changes by analyzing HTML structure."""
 
-    Args:
-        snapshot_path: Path to the snapshot HTML file
-        line_number: Line number in the snapshot
+    def __init__(self, snapshot_path: Path):
+        self.snapshot_path = snapshot_path
+        self.snapshot_lines = []
+        if snapshot_path.exists():
+            with open(snapshot_path, 'r', encoding='utf-8') as f:
+                self.snapshot_lines = f.readlines()
 
-    Returns:
-        Tuple of (section_name, anchor_id)
-    """
-    if not snapshot_path.exists():
+    def get_section_info(self, line_number: int) -> Tuple[str, str]:
+        """Get section name and anchor ID from snapshot."""
+        if not self.snapshot_lines:
+            return ("不明なセクション", "")
+
+        # Look backwards for nearest heading
+        for i in range(min(line_number - 1, len(self.snapshot_lines) - 1),
+                      max(0, line_number - 500), -1):
+            line = self.snapshot_lines[i]
+
+            # Match h2-h4 with id
+            h_match = re.search(r'<h([2-4])[^>]*id=["\']([^"\']+)["\'][^>]*>', line)
+            if h_match:
+                level = int(h_match.group(1))
+                anchor_id = h_match.group(2)
+
+                # Get heading text
+                if i + 1 < len(self.snapshot_lines):
+                    heading_text = re.sub(r'<[^>]+>', '', self.snapshot_lines[i + 1]).strip()
+                    if heading_text:
+                        return (heading_text, anchor_id)
+
         return ("不明なセクション", "")
 
-    with open(snapshot_path, 'r', encoding='utf-8') as f:
-        lines = f.readlines()
+    def split_chunk_into_changes(self,
+                                 chunk_start_line: int,
+                                 added_lines: List[str],
+                                 removed_lines: List[str],
+                                 context_lines: List[str] = None) -> List[Change]:
+        """Split a single diff chunk into multiple semantic changes."""
+        changes = []
 
-    # Look backwards from the line to find the nearest heading with id
-    for i in range(min(line_number - 1, len(lines) - 1), max(0, line_number - 500), -1):
-        line = lines[i]
+        # Use context lines to determine element type
+        all_context = context_lines if context_lines else []
 
-        # Match heading tags with id attribute
-        h_match = re.search(r'<h([2-4])[^>]*id=["\']([^"\']+)["\'][^>]*>', line)
-        if h_match:
-            level = int(h_match.group(1))
-            anchor_id = h_match.group(2)
+        # Check if we're inside a table row by looking at immediate context
+        # Need to see <tr> or <td> in close proximity
+        recent_context = all_context[-5:] if len(all_context) > 5 else all_context
+        in_table_row = any('<tr>' in line or '<td>' in line for line in recent_context)
 
-            # Get heading text from next line
-            if i + 1 < len(lines):
-                heading_text = re.sub(r'<[^>]+>', '', lines[i + 1]).strip()
-                if heading_text:
-                    return (heading_text, anchor_id)
+        # Analyze added lines
+        if added_lines:
+            added_boundaries = HTMLStructureDetector.find_element_boundaries(added_lines)
 
-    return ("不明なセクション", "")
+            for start, end in added_boundaries:
+                element_lines = added_lines[start:end]
+
+                # First, get natural element type
+                element_type = HTMLStructureDetector.detect_element_type(element_lines)
+
+                # Override only if we're in a table row AND element doesn't have clear type
+                if (in_table_row and
+                    element_type == "content" and
+                    '<tr>' not in ' '.join(element_lines) and
+                    '<p>' not in ' '.join(element_lines) and
+                    '<div' not in ' '.join(element_lines)):
+                    element_type = "table_row"
+
+                # Get preview text
+                preview = self._extract_preview_text(element_lines)
+
+                # Get section info
+                section, anchor = self.get_section_info(chunk_start_line)
+
+                # Determine change type
+                change_type = self._classify_change_type(element_type, element_lines)
+
+                change = Change(
+                    section=section,
+                    type=change_type,
+                    line=chunk_start_line,
+                    preview=preview,
+                    additions=len(element_lines),
+                    deletions=0,
+                    anchor=anchor,
+                    html_element=element_type
+                )
+                changes.append(change)
+
+        # Analyze removed lines
+        if removed_lines:
+            removed_boundaries = HTMLStructureDetector.find_element_boundaries(removed_lines)
+
+            for start, end in removed_boundaries:
+                element_lines = removed_lines[start:end]
+
+                # First, get natural element type
+                element_type = HTMLStructureDetector.detect_element_type(element_lines)
+
+                # Override only if we're in a table row AND element doesn't have clear type
+                if (in_table_row and
+                    element_type == "content" and
+                    '<tr>' not in ' '.join(element_lines) and
+                    '<p>' not in ' '.join(element_lines) and
+                    '<div' not in ' '.join(element_lines)):
+                    element_type = "table_row"
+
+                # Get preview text
+                preview = self._extract_preview_text(element_lines)
+
+                # Get section info
+                section, anchor = self.get_section_info(chunk_start_line)
+
+                # Determine change type
+                change_type = self._classify_change_type(element_type, element_lines, is_deletion=True)
+
+                change = Change(
+                    section=section,
+                    type=change_type,
+                    line=chunk_start_line,
+                    preview=preview,
+                    additions=0,
+                    deletions=len(element_lines),
+                    anchor=anchor,
+                    html_element=element_type
+                )
+                changes.append(change)
+
+        # Merge small changes if they're part of the same logical unit
+        changes = self._merge_related_changes(changes)
+
+        return changes
+
+    def _extract_preview_text(self, lines: List[str], max_length: int = 150) -> str:
+        """Extract meaningful preview text from HTML lines."""
+        # Remove HTML tags and extract text
+        text_parts = []
+        for line in lines:
+            # Skip pure structural tags
+            if re.match(r'^\s*</?[^>]+>\s*$', line):
+                continue
+
+            # Extract text content
+            text = re.sub(r'<[^>]+>', '', line).strip()
+            if text and len(text) > 3:
+                text_parts.append(text)
+
+        preview = ' '.join(text_parts)
+        preview = re.sub(r'\s+', ' ', preview).strip()
+
+        if len(preview) > max_length:
+            preview = preview[:max_length] + "..."
+
+        return preview
+
+    def _classify_change_type(self, element_type: str, lines: List[str],
+                              is_deletion: bool = False) -> str:
+        """Classify the type of change with human-readable labels."""
+        combined = ' '.join(lines).lower()
+
+        prefix = "削除: " if is_deletion else "追加: "
+
+        # Specific patterns
+        if 'admonition warning' in combined or 'class="admonition warning' in combined:
+            return f"{prefix}Warning"
+        elif 'admonition note' in combined:
+            return f"{prefix}Note"
+        elif element_type == "table_row":
+            return f"{prefix}テーブル行"
+        elif element_type == "list_item":
+            return f"{prefix}リスト項目"
+        elif element_type == "heading":
+            if is_deletion:
+                return "見出し変更（旧）"
+            else:
+                return "見出し変更（新）"
+        elif element_type == "navigation":
+            return f"{prefix}ナビゲーション"
+        elif element_type == "paragraph":
+            return f"{prefix}段落"
+        elif element_type == "admonition":
+            return f"{prefix}注意書き"
+        else:
+            return f"{prefix}コンテンツ"
+
+    def _merge_related_changes(self, changes: List[Change]) -> List[Change]:
+        """Merge changes that are part of the same logical modification."""
+        if len(changes) <= 1:
+            return changes
+
+        merged = []
+        i = 0
+
+        while i < len(changes):
+            current = changes[i]
+
+            # Check if next change is a paired modification (add + delete of same type)
+            if (i + 1 < len(changes) and
+                changes[i + 1].html_element == current.html_element and
+                changes[i + 1].section == current.section and
+                current.additions > 0 and changes[i + 1].deletions > 0):
+
+                # This is a modification (not pure add/delete)
+                next_change = changes[i + 1]
+
+                merged_change = Change(
+                    section=current.section,
+                    type=f"変更: {current.html_element}",
+                    line=current.line,
+                    preview=f"[旧] {next_change.preview} → [新] {current.preview}",
+                    additions=current.additions,
+                    deletions=next_change.deletions,
+                    anchor=current.anchor,
+                    html_element=current.html_element
+                )
+                merged.append(merged_change)
+                i += 2
+            else:
+                merged.append(current)
+                i += 1
+
+        return merged
 
 
-def extract_anchor_id(lines: List[str], chunk_start: int, max_lines: int = 100) -> str:
-    """Extract the closest HTML id or anchor for navigation.
-
-    Args:
-        lines: All lines from the diff
-        chunk_start: Index of the chunk
-        max_lines: Max lines to look back
-
-    Returns:
-        HTML id attribute (e.g., "12" for section 1.2)
-    """
-    for i in range(max(0, chunk_start - max_lines), chunk_start):
-        line = lines[i]
-
-        # Skip deleted lines
-        if line.startswith('-') and not line.startswith('---'):
-            continue
-
-        # Match id attributes in any tag
-        id_match = re.search(r'id=["\']([^"\']+)["\']', line)
-        if id_match:
-            return id_match.group(1)
-
-    return ""
-
-
-def parse_diff_summary(diff_path: Path) -> List[Dict[str, str]]:
-    """Parse diff file and extract change summary.
-
-    Args:
-        diff_path: Path to diff file
-
-    Returns:
-        List of change descriptions with line numbers
-    """
+def parse_diff_advanced(diff_path: Path, snapshot_path: Path) -> List[Dict]:
+    """Parse diff with advanced semantic change detection."""
     if not diff_path.exists():
         return []
 
@@ -178,7 +334,8 @@ def parse_diff_summary(diff_path: Path) -> List[Dict[str, str]]:
         diff_content = f.read()
 
     lines = diff_content.split('\n')
-    changes = []
+    detector = SemanticChangeDetector(snapshot_path)
+    all_changes = []
 
     i = 0
     while i < len(lines):
@@ -190,10 +347,10 @@ def parse_diff_summary(diff_path: Path) -> List[Dict[str, str]]:
             old_line = int(chunk_match.group(1))
             new_line = int(chunk_match.group(2))
 
-            # Collect changes in this chunk
+            # Collect all added, removed, and context lines in this chunk
             added_lines = []
             removed_lines = []
-            chunk_start = i
+            context_lines = []
 
             i += 1
             while i < len(lines) and not lines[i].startswith('@@'):
@@ -201,61 +358,24 @@ def parse_diff_summary(diff_path: Path) -> List[Dict[str, str]]:
                     added_lines.append(lines[i][1:])
                 elif lines[i].startswith('-') and not lines[i].startswith('---'):
                     removed_lines.append(lines[i][1:])
+                elif not lines[i].startswith('\\'):  # Not a "No newline" marker
+                    # This is a context line (no prefix or space prefix)
+                    context_lines.append(lines[i].lstrip(' '))
                 i += 1
 
-            # Only process if there are actual changes
+            # Split chunk into semantic changes
             if added_lines or removed_lines:
-                section = extract_section_context(lines, chunk_start)
-                change_type = identify_change_type(added_lines, removed_lines)
-                anchor_id = extract_anchor_id(lines, chunk_start)
-
-                # Extract meaningful preview text
-                preview_text = ""
-                if added_lines:
-                    # Get first meaningful line
-                    for line in added_lines:
-                        text = re.sub(r'<[^>]+>', '', line).strip()
-                        if text and len(text) > 5:
-                            preview_text = text[:100] + ("..." if len(text) > 100 else "")
-                            break
-
-                change_desc = {
-                    'section': section,
-                    'type': change_type,
-                    'line': new_line,
-                    'preview': preview_text,
-                    'additions': len(added_lines),
-                    'deletions': len(removed_lines),
-                    'anchor': anchor_id
-                }
-
-                changes.append(change_desc)
+                chunk_changes = detector.split_chunk_into_changes(
+                    new_line, added_lines, removed_lines, context_lines
+                )
+                all_changes.extend(chunk_changes)
 
             continue
 
         i += 1
 
-    return changes
-
-
-def generate_summary_json(changes: List[Dict[str, str]], output_path: Path) -> None:
-    """Generate JSON summary file.
-
-    Args:
-        changes: List of change descriptions
-        output_path: Path to output JSON file
-    """
-    import json
-
-    summary = {
-        'total_changes': len(changes),
-        'changes': changes
-    }
-
-    with open(output_path, 'w', encoding='utf-8') as f:
-        json.dump(summary, f, ensure_ascii=False, indent=2)
-
-    print(f"✅ Generated summary: {output_path}")
+    # Convert to dict format
+    return [asdict(change) for change in all_changes]
 
 
 def main():
@@ -267,33 +387,42 @@ def main():
         print("❌ diff_details.txt not found")
         return
 
-    print("🔍 Parsing diff file...")
-    changes = parse_diff_summary(diff_path)
-
-    # Enhance with snapshot data
+    # Find latest snapshot
     snapshot_files = sorted(Path("snapshots").glob("*.html"))
-    if len(snapshot_files) >= 1:
-        latest_snapshot = snapshot_files[-1]
-        print(f"📄 Reading section info from {latest_snapshot.name}")
+    if not snapshot_files:
+        print("❌ No snapshot files found")
+        return
 
-        for change in changes:
-            section_name, anchor_id = get_section_from_snapshot(latest_snapshot, change['line'])
-            if section_name != "不明なセクション":
-                change['section'] = section_name
-            if anchor_id:
-                change['anchor'] = anchor_id
+    latest_snapshot = snapshot_files[-1]
+    print(f"🔍 Parsing diff with advanced semantic detection...")
+    print(f"📄 Using snapshot: {latest_snapshot.name}")
 
-    print(f"📊 Found {len(changes)} change(s):")
+    changes = parse_diff_advanced(diff_path, latest_snapshot)
+
+    print(f"\n📊 Found {len(changes)} semantic change(s):\n")
+
     for i, change in enumerate(changes, 1):
-        print(f"\n{i}. {change['section']} > {change['type']}")
+        print(f"{i}. {change['section']} > {change['type']}")
         print(f"   Line: {change['line']}")
+        print(f"   Element: {change['html_element']}")
         print(f"   Changes: +{change['additions']} -{change['deletions']}")
         if change.get('anchor'):
             print(f"   Anchor: #{change['anchor']}")
         if change['preview']:
             print(f"   Preview: {change['preview']}")
+        print()
 
-    generate_summary_json(changes, output_path)
+    # Generate JSON
+    import json
+    summary = {
+        'total_changes': len(changes),
+        'changes': changes
+    }
+
+    with open(output_path, 'w', encoding='utf-8') as f:
+        json.dump(summary, f, ensure_ascii=False, indent=2)
+
+    print(f"✅ Generated advanced summary: {output_path}")
 
 
 if __name__ == "__main__":

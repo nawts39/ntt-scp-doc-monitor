@@ -1,23 +1,60 @@
 {
-  "total_changes": 2,
+  "total_changes": 5,
   "changes": [
     {
       "section": "不明なセクション",
-      "type": "ナビゲーション",
+      "type": "追加: ナビゲーション",
       "line": 282,
       "preview": "6. 変更履歴",
       "additions": 7,
       "deletions": 0,
-      "anchor": ""
+      "anchor": "",
+      "detail": "",
+      "html_element": "navigation"
+    },
+    {
+      "section": "1. サービス概要",
+      "type": "変更: content",
+      "line": 317,
+      "preview": "[旧] 1.1 サービス概要 → [新] 1.1 サービスの特徴",
+      "additions": 1,
+      "deletions": 1,
+      "anchor": "1",
+      "detail": "",
+      "html_element": "content"
+    },
+    {
+      "section": "1.1.2 信頼性・可用性",
+      "type": "削除: リスト項目",
+      "line": 359,
+      "preview": "ファイアウォール機能によるセキュアなネットワーク分離",
+      "additions": 0,
+      "deletions": 3,
+      "anchor": "112",
+      "detail": "",
+      "html_element": "list_item"
     },
     {
       "section": "1.2 サービスメニュー",
-      "type": "段落",
+      "type": "追加: 段落",
       "line": 439,
       "preview": "※ 2026年1月20日より、リソースプール機能の一部仕様が変更されました。詳細は変更履歴をご確認ください。",
       "additions": 3,
       "deletions": 0,
-      "anchor": "12"
+      "anchor": "12",
+      "detail": "",
+      "html_element": "paragraph"
+    },
+    {
+      "section": "2.3.3 管理機能ネットワーク",
+      "type": "追加: テーブル行",
+      "line": 2257,
+      "preview": "Windowsライセンスのライセンス認証用Proxy",
+      "additions": 1,
+      "deletions": 0,
+      "anchor": "233",
+      "detail": "",
+      "html_element": "table_row"
     }
   ]
 }
