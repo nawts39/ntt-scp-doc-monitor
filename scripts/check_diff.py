@@ -112,6 +112,17 @@ def main():
         with open("diff_details.txt", "w", encoding="utf-8") as f:
             f.write(diff_truncated)
 
+        # Generate semantic diff summary using parse_diff_summary.py
+        print("🔍 Generating semantic diff summary...")
+        try:
+            subprocess.run(
+                ["python", "scripts/parse_diff_summary.py", "diff_details.txt", latest_snapshot],
+                check=True
+            )
+            print("✅ Semantic diff summary generated")
+        except subprocess.CalledProcessError as e:
+            print(f"⚠️  Warning: Could not generate semantic summary: {e}")
+
         # Set output for GitHub Actions
         with open(os.environ.get('GITHUB_OUTPUT', '/dev/null'), 'a') as f:
             f.write("changed=true\n")
